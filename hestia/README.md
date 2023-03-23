@@ -17,3 +17,7 @@ After that we plan to add security system integration and smart devices integrat
 
 Authorisation feature is mostly finished, some changes will be added with progression of application development.
 
+
+
+https://user-images.githubusercontent.com/72256017/227246217-7c673e9a-24f0-4d06-8b5d-769efb255b75.mp4
+
