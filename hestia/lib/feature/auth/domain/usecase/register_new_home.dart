@@ -8,8 +8,10 @@ class RegisterNewUserUsecase {
           {required String username,
           required String email,
           required String password,
-          required bool isVerified}) =>
+          required bool isVerified,
+          required bool isSuperUser}) =>
       remoteDataSource.registerNewUser(
+          isSuperUser: isSuperUser,
           username: username,
           isVerified: isVerified,
           email: email,

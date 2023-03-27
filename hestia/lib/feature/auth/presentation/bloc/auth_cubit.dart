@@ -8,18 +8,23 @@ class AuthCubit extends Cubit<AuthCubitStates> {
   final ILocalDataSource localDataSource;
   final IsSignedIn isSignedIn;
   final LoginUsecase loginUsecase;
-  bool didAuthenticate = false;
+  bool didAuthenticate;
+
   AuthCubit(
       {required this.isSignedIn,
       required this.localDataSource,
-      required this.loginUsecase})
+      required this.loginUsecase,
+      this.didAuthenticate = false})
       : super(AuthInitialState(isSignedIn));
 
-  void navigateToAuthPages() async {
+  Future<void> navigateToAuthPages() async {
     final isAuthenticated = await isSignedIn.call();
-    if (isAuthenticated) {
+    if (!isAuthenticated) {
       emit(AuthBiometricsState(loginUsecase));
-      didAuthenticate = await loginUsecase.loginByBiometrics();
+      if (state is AuthBiometricsState) {
+        await Future.delayed(const Duration(seconds: 5));
+        didAuthenticate = await loginUsecase.loginByBiometrics();
+      }
     } else {
       emit(AuthSignInState());
     }

@@ -19,7 +19,7 @@ class StartAppSplashScreen extends StatelessWidget {
 
       if (ServiceLocator.i.authCubit.state is AuthBiometricsState) {
         AutoRouter.of(context).push(
-          SplashRouter(loginUsecase: loginUsecase),
+          const SplashRouter(),
         );
       } else if (ServiceLocator.i.authCubit.state is AuthSignInState) {
         AutoRouter.of(context).push(

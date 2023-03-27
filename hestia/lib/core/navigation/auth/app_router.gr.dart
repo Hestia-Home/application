@@ -15,7 +15,6 @@ import 'package:auto_route/auto_route.dart' as _i6;
 import 'package:auto_route/empty_router_widgets.dart' as _i3;
 import 'package:flutter/material.dart' as _i7;
 
-import '../../../feature/auth/domain/usecase/log_in_by_biometrics.dart' as _i8;
 import '../../../feature/auth/presentation/screens/auth_screen/ui/auth_screen.dart'
     as _i4;
 import '../../../feature/auth/presentation/screens/auth_screen/ui/auth_splash_screen.dart'
@@ -40,13 +39,9 @@ class AppRouter extends _i6.RootStackRouter {
       );
     },
     SplashRouter.name: (routeData) {
-      final args = routeData.argsAs<SplashRouterArgs>();
       return _i6.MaterialPageX<dynamic>(
         routeData: routeData,
-        child: _i2.AuthSplashScreen(
-          key: args.key,
-          loginUsecase: args.loginUsecase,
-        ),
+        child: const _i2.AuthSplashScreen(),
       );
     },
     AuthRouter.name: (routeData) {
@@ -124,36 +119,14 @@ class StartAppSplashRouteArgs {
 
 /// generated route for
 /// [_i2.AuthSplashScreen]
-class SplashRouter extends _i6.PageRouteInfo<SplashRouterArgs> {
-  SplashRouter({
-    _i7.Key? key,
-    required _i8.LoginUsecase loginUsecase,
-  }) : super(
+class SplashRouter extends _i6.PageRouteInfo<void> {
+  const SplashRouter()
+      : super(
           SplashRouter.name,
           path: 'authSplash',
-          args: SplashRouterArgs(
-            key: key,
-            loginUsecase: loginUsecase,
-          ),
         );
 
   static const String name = 'SplashRouter';
-}
-
-class SplashRouterArgs {
-  const SplashRouterArgs({
-    this.key,
-    required this.loginUsecase,
-  });
-
-  final _i7.Key? key;
-
-  final _i8.LoginUsecase loginUsecase;
-
-  @override
-  String toString() {
-    return 'SplashRouterArgs{key: $key, loginUsecase: $loginUsecase}';
-  }
 }
 
 /// generated route for

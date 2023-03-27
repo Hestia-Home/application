@@ -3,6 +3,6 @@ abstract class IRemoteRepository {
       {required String username,
       required String email,
       required String password,
-      required bool isVerified});
-  Future<void> connectToSmarthome();
+      required bool isVerified,
+      required bool isSuperUser});
 }

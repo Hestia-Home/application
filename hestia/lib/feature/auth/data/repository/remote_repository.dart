@@ -6,17 +6,14 @@ class RemoteRepoistory implements IRemoteRepository {
   RemoteRepoistory({required this.remoteDataSource});
 
   @override
-  Future<void> connectToSmarthome() async {
-    await remoteDataSource.connectToSmarthome();
-  }
-
-  @override
   Future<void> registerNewUser(
       {required String username,
       required String email,
       required String password,
-      required bool isVerified}) async {
+      required bool isVerified,
+      required bool isSuperUser}) async {
     await remoteDataSource.registerNewUser(
+        isSuperUser: isSuperUser,
         username: username,
         isVerified: isVerified,
         password: password,

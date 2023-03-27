@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_smarthome/feature/auth/domain/usecase/log_in_by_biometrics.dart';
 import 'package:flutter_smarthome/feature/auth/presentation/widgets/auth_widgets.dart';
 
 class AuthSplashScreen extends StatelessWidget {
-  const AuthSplashScreen({Key? key, required this.loginUsecase})
-      : super(key: key);
-  final LoginUsecase loginUsecase;
+  const AuthSplashScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    () async => await loginUsecase.loginByBiometrics();
     return Scaffold(
         body: SafeArea(
       child: Padding(

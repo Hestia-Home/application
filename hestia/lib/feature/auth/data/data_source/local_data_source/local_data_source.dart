@@ -5,6 +5,7 @@ import 'package:flutter_smarthome/feature/auth/data/data_source/local_data_sourc
 import 'package:flutter_smarthome/feature/auth/data/model/user_model.dart';
 import 'package:flutter_smarthome/feature/auth/domain/entity/user_entity.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:local_auth_android/local_auth_android.dart';
 
 class LocalDataSource implements ILocalDataSource {
   final FlutterSecureStorage secureStorage;
@@ -23,8 +24,14 @@ class LocalDataSource implements ILocalDataSource {
       try {
         didAuthenticate = await authentication.authenticate(
             localizedReason: 'Авторизуйтесь, чтобы продолжить',
+            authMessages: <AuthMessages>[
+              const AndroidAuthMessages(
+                  signInTitle: "Необходима аутентификация!",
+                  biometricHint: "",
+                  cancelButton: "Нет, спасибо!")
+            ],
             options: const AuthenticationOptions(
-                stickyAuth: true, useErrorDialogs: true));
+                stickyAuth: false, useErrorDialogs: true));
       } catch (e) {
         Exception(e.toString());
       }
