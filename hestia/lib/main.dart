@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_smarthome/core/di/service_locator.dart';
 import 'package:flutter_smarthome/core/navigation/auth/app_router.gr.dart';
+import 'package:flutter_smarthome/feature/main/presentation/screens/main_screen.dart';
 import 'feature/auth/presentation/bloc/auth_cubit.dart';
 
 void main() async {
@@ -17,11 +18,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<AuthCubit>(context).navigateToAuthPages();
-    return MaterialApp.router(
-      routerDelegate: appRouter.delegate(),
-      routeInformationParser: appRouter.defaultRouteParser(),
+    return MaterialApp(
+      home: const MainScreen(),
       debugShowCheckedModeBanner: false,
     );
+    // BlocProvider.of<AuthCubit>(context).navigateToAuthPages();
+    // return MaterialApp.router(
+    //   routerDelegate: appRouter.delegate(),
+    //   routeInformationParser: appRouter.defaultRouteParser(),
+    //   debugShowCheckedModeBanner: false,
+    // );
   }
 }

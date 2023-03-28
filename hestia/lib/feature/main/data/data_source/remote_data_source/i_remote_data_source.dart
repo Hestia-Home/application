@@ -1,3 +1,3 @@
 abstract class IRemoteDataSource {
-  void setTargetTemperatureInWeatherStation();
+  void setTargetTemperatureInWeatherStation(double targetTemperature);
 }

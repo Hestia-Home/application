@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_smarthome/feature/auth/data/data_source/remote_data_source/i_remote_data_source.dart';
 
@@ -25,7 +24,6 @@ class RemoteDataSource implements IRemoteDataSource {
         "is_superuser": isSuperUser,
         "is_active": true
       });
-      print(response.toString());
     } catch (e) {
       response = e.toString();
     }
@@ -38,7 +36,6 @@ class RemoteDataSource implements IRemoteDataSource {
     try {
       response = await dio
           .post(register, data: {"username": username, "password": password});
-      print(response.data.toString());
     } catch (e) {
       response = e.toString();
     }
