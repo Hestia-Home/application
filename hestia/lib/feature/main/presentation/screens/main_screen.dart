@@ -1,43 +1,71 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_smarthome/feature/main/presentation/widgets/page_view_indicator.dart';
+import 'package:flutter_smarthome/feature/main/presentation/widgets/room_view.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/date_symbol_data_local.dart';
 
+// Test data will be replaced soon
 const user = "Станислав Моисеев";
 final DateTime dateTime = DateTime.now();
+const List<String> rooms = [
+  "Кухня",
+  "Спальня 1",
+  "Гостинная",
+  "Спальня 2",
+  "Спальня 4",
+  "Спальня 3"
+];
 
-class MainScreen extends StatelessWidget {
-  const MainScreen({
+class MainScreen extends StatefulWidget {
+  late final controller = PageController();
+  MainScreen({
     super.key, //required this.image
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-          child: Center(
-        child: Column(
-          children: [
-            userComponent(
-                image: const AssetImage(
-                  "assets/main/user_image.jpg",
-                ),
-                userName: user),
-            const SizedBox(height: 25),
-            roomImageComponent(const AssetImage('assets/main/kitchen.jpg'))
-          ],
-        ),
-      )),
-    );
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  @override
+  void dispose() {
+    widget.controller.dispose();
+    super.dispose();
   }
 
-  Widget roomImageComponent(ImageProvider image) {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: Container(
-        height: 125,
-        width: 170,
-        decoration: BoxDecoration(image: DecorationImage(image: image)),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        elevation: 0,
+        toolbarHeight: 70,
+        shadowColor: Colors.white,
+        backgroundColor: Colors.white,
+        leadingWidth: double.maxFinite,
+        leading: userComponent(
+            image: const AssetImage(
+              "assets/main/user_image.jpg",
+            ),
+            userName: user),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(35),
+          child: SingleChildScrollView(
+            child: PageViewIndicator(
+                roomsNames: rooms, controller: widget.controller),
+          ),
+        ),
       ),
+      body: SafeArea(
+          child: Center(
+        child: PageView.builder(
+            controller: widget.controller,
+            itemCount: rooms.length,
+            itemBuilder: ((context, index) =>
+                const SingleChildScrollView(child: RoomView()))),
+      )),
     );
   }
 
@@ -50,7 +78,7 @@ class MainScreen extends StatelessWidget {
       padding: const EdgeInsets.all(10.0),
       child: Row(
         children: [
-          InkWell(
+          GestureDetector(
             onTap: () {},
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15),
@@ -78,7 +106,7 @@ class MainScreen extends StatelessWidget {
                     color: Colors.black,
                     letterSpacing: 0.8,
                     fontFamily: "Lexend",
-                    fontSize: 17,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold),
               ),
               Text(
@@ -88,7 +116,7 @@ class MainScreen extends StatelessWidget {
                     fontFamily: "Lexend",
                     fontSize: 14,
                     fontWeight: FontWeight.w100,
-                    color: Color.fromARGB(255, 85, 85, 85)),
+                    color: Color.fromARGB(255, 104, 104, 104)),
               ),
             ],
           ),
@@ -100,6 +128,7 @@ class MainScreen extends StatelessWidget {
                   icon: const Icon(
                     Icons.settings,
                     size: 25,
+                    color: Colors.black,
                   )),
             ),
           ),

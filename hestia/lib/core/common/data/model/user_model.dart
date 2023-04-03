@@ -1,4 +1,4 @@
-import 'package:flutter_smarthome/feature/auth/domain/entity/user_entity.dart';
+import 'package:flutter_smarthome/core/common/domain/entity/user_entity.dart';
 
 class UserModel extends UserEntity {
   const UserModel(

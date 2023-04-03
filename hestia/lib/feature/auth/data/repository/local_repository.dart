@@ -1,5 +1,5 @@
+import 'package:flutter_smarthome/core/common/domain/entity/user_entity.dart';
 import 'package:flutter_smarthome/feature/auth/data/data_source/local_data_source/i_local_data_source.dart';
-import 'package:flutter_smarthome/feature/auth/domain/entity/user_entity.dart';
 import 'package:flutter_smarthome/feature/auth/domain/repository/i_local_repository.dart';
 
 class LocalRepository implements ILocalRepository {

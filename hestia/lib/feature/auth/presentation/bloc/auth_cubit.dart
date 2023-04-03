@@ -19,7 +19,7 @@ class AuthCubit extends Cubit<AuthCubitStates> {
 
   Future<void> navigateToAuthPages() async {
     final isAuthenticated = await isSignedIn.call();
-    if (!isAuthenticated) {
+    if (isAuthenticated) {
       emit(AuthBiometricsState(loginUsecase));
       if (state is AuthBiometricsState) {
         await Future.delayed(const Duration(seconds: 5));

@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_smarthome/core/common/domain/entity/user_entity.dart';
 import 'package:flutter_smarthome/feature/auth/data/data_source/local_data_source/i_local_data_source.dart';
-import 'package:flutter_smarthome/feature/auth/data/model/user_model.dart';
-import 'package:flutter_smarthome/feature/auth/domain/entity/user_entity.dart';
+import 'package:flutter_smarthome/core/common/data/model/user_model.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:local_auth_android/local_auth_android.dart';
 

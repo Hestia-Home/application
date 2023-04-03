@@ -1,4 +1,4 @@
-import 'package:flutter_smarthome/feature/auth/domain/entity/smarthome_entity.dart';
+import 'package:flutter_smarthome/feature/main/domain/entity/smarthome_entity.dart';
 
 class SmarthomeModel extends SmarthomeEntity {
   const SmarthomeModel(

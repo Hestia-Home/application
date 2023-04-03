@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const MainScreen(),
+      home: MainScreen(),
       debugShowCheckedModeBanner: false,
     );
     // BlocProvider.of<AuthCubit>(context).navigateToAuthPages();
@@ -27,6 +27,6 @@ class MyApp extends StatelessWidget {
     //   routerDelegate: appRouter.delegate(),
     //   routeInformationParser: appRouter.defaultRouteParser(),
     //   debugShowCheckedModeBanner: false,
-    // );
+    //);
   }
 }

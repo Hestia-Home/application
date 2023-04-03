@@ -6,15 +6,14 @@ import 'package:flutter_smarthome/feature/main/data/model/sensor_model.dart';
 import 'package:web_socket_channel/io.dart';
 
 class RemoteDataSource implements IRemoteDataSource {
-  late Stream sensorStream;
-  final IOWebSocketChannel channel;
+  late Stream _sensorStream;
+  final IOWebSocketChannel _channel;
   RemoteDataSource()
-      : channel = IOWebSocketChannel.connect(
-          Uri.parse('ws://10.0.2.2:8000/ws/1'),
-        ) {
+      : _channel =
+            IOWebSocketChannel.connect(Uri.parse('ws://10.0.2.2:8000/ws/1')) {
     // Temperature tracking stream from temperature sensor
     // If no temperature sensor installed inside the room returns null
-    sensorStream = channel.stream.map((event) {
+    _sensorStream = _channel.stream.map((event) {
       Map<String, dynamic> json = jsonDecode(event);
       int id = json['id'] as int;
       switch (id) {
@@ -26,15 +25,18 @@ class RemoteDataSource implements IRemoteDataSource {
     }).asBroadcastStream();
   }
   @override
+  Stream get sensorStream => _sensorStream;
+
+  @override
   void setTargetTemperatureInWeatherStation(double targerTemperature) {
     final data = {
       "weather_station": "weather_station",
       "targer_temperature": targerTemperature
     };
-    channel.sink.add(data);
+    _channel.sink.add(data);
   }
 
   void dispose() {
-    channel.sink.close();
+    _channel.sink.close();
   }
 }
