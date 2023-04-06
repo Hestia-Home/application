@@ -4,14 +4,19 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_smarthome/core/common/domain/entity/user_entity.dart';
 import 'package:flutter_smarthome/feature/auth/data/data_source/local_data_source/i_local_data_source.dart';
 import 'package:flutter_smarthome/core/common/data/model/user_model.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:local_auth_android/local_auth_android.dart';
 
-class LocalDataSource implements ILocalDataSource {
+class LocalDataSourceAuth implements ILocalDataSourceAuth {
   final FlutterSecureStorage secureStorage;
+  final GetStorage getStorage;
   final LocalAuthentication authentication;
 
-  LocalDataSource({required this.authentication, required this.secureStorage});
+  LocalDataSourceAuth(
+      {required this.authentication,
+      required this.secureStorage,
+      required this.getStorage});
 
   @override
   Future<bool> authenticate() async {
@@ -40,8 +45,8 @@ class LocalDataSource implements ILocalDataSource {
   }
 
   @override
-  Future<UserEntity> getUser() async {
-    final userData = await secureStorage.read(key: 'user') ?? '';
+  UserEntity getUser() {
+    final userData = getStorage.read('user') ?? '';
     final UserEntity user = UserModel.fromJson(jsonDecode(userData));
     return user;
   }
@@ -58,15 +63,13 @@ class LocalDataSource implements ILocalDataSource {
   }
 
   @override
-  Future<void> setUser(
+  void setUser(
       {required String userName,
       required String userId,
-      required bool isLoggedIn}) async {
+      required bool isLoggedIn}) {
     final String userModel =
-        UserModel(name: userName, userid: userId, isLoggedIn: isLoggedIn)
-            .toJson()
-            .toString();
-    await secureStorage.write(key: 'user', value: userModel);
+        UserModel(name: userName, isLoggedIn: isLoggedIn).toJson().toString();
+    getStorage.write('user', userModel);
   }
 
   @override

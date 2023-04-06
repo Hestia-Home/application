@@ -2,14 +2,14 @@ import 'package:flutter_smarthome/core/common/domain/entity/user_entity.dart';
 import 'package:flutter_smarthome/feature/auth/data/data_source/local_data_source/i_local_data_source.dart';
 import 'package:flutter_smarthome/feature/auth/domain/repository/i_local_repository.dart';
 
-class LocalRepository implements ILocalRepository {
-  final ILocalDataSource localDataSource;
+class LocalRepositoryAuth implements ILocalRepositoryAuth {
+  final ILocalDataSourceAuth localDataSource;
 
-  LocalRepository({required this.localDataSource});
+  LocalRepositoryAuth({required this.localDataSource});
 
   @override
-  Future<UserEntity> getUser() async {
-    return await localDataSource.getUser();
+  UserEntity getUser() {
+    return localDataSource.getUser();
   }
 
   @override
@@ -23,11 +23,11 @@ class LocalRepository implements ILocalRepository {
   }
 
   @override
-  Future<void> setUser(
+  void setUser(
       {required String userName,
       required String userId,
-      required bool isLoggedIn}) async {
-    await localDataSource.setUser(
+      required bool isLoggedIn}) {
+    localDataSource.setUser(
         userId: userId, userName: userName, isLoggedIn: isLoggedIn);
   }
 

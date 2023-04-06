@@ -3,25 +3,24 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_smarthome/core/di/service_locator.dart';
-import 'package:flutter_smarthome/core/navigation/auth/app_router.gr.dart';
+import 'package:flutter_smarthome/core/navigation/app_router/app_router.gr.dart';
 import 'package:flutter_smarthome/feature/auth/presentation/bloc/auth_cubit.dart';
 import 'package:flutter_smarthome/feature/auth/presentation/bloc/auth_cubit_states.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class StartAppSplashScreen extends StatelessWidget {
-  StartAppSplashScreen({super.key});
-  final loginUsecase = ServiceLocator.i.loginUsecase;
+  const StartAppSplashScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     Timer(const Duration(seconds: 5), () {
       BlocProvider.of<AuthCubit>(context).navigateToAuthPages();
 
-      if (ServiceLocator.i.authCubit.state is AuthBiometricsState) {
+      if (AuthServiceLocator.i.authCubit.state is AuthBiometricsState) {
         AutoRouter.of(context).push(
           const SplashRouter(),
         );
-      } else if (ServiceLocator.i.authCubit.state is AuthSignInState) {
+      } else if (AuthServiceLocator.i.authCubit.state is AuthSignInState) {
         AutoRouter.of(context).push(
             const AuthRouter(children: [RegistrationRoute(), AuthRoute()]));
       }

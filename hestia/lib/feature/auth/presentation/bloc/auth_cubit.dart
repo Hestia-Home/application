@@ -1,18 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_smarthome/feature/auth/data/data_source/local_data_source/i_local_data_source.dart';
 import 'package:flutter_smarthome/feature/auth/domain/usecase/is_signed_in_usecase.dart';
 import 'package:flutter_smarthome/feature/auth/domain/usecase/log_in_by_biometrics.dart';
 import 'package:flutter_smarthome/feature/auth/presentation/bloc/auth_cubit_states.dart';
 
 class AuthCubit extends Cubit<AuthCubitStates> {
-  final ILocalDataSource localDataSource;
   final IsSignedIn isSignedIn;
   final LoginUsecase loginUsecase;
   bool didAuthenticate;
 
   AuthCubit(
       {required this.isSignedIn,
-      required this.localDataSource,
       required this.loginUsecase,
       this.didAuthenticate = false})
       : super(AuthInitialState(isSignedIn));

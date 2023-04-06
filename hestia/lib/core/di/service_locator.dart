@@ -1,32 +1,108 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_smarthome/core/navigation/auth/app_router.gr.dart';
+import 'package:flutter_smarthome/core/navigation/app_router/app_router.gr.dart';
 import 'package:flutter_smarthome/feature/auth/data/data_source/local_data_source/i_local_data_source.dart';
 import 'package:flutter_smarthome/feature/auth/data/data_source/local_data_source/local_data_source.dart';
 import 'package:flutter_smarthome/feature/auth/data/repository/local_repository.dart';
 import 'package:flutter_smarthome/feature/auth/domain/repository/i_local_repository.dart';
+import 'package:flutter_smarthome/feature/main/data/data_source/local_data_source/i_local_data_source.dart';
+import 'package:flutter_smarthome/feature/main/data/data_source/local_data_source/local_data_source.dart';
+import 'package:flutter_smarthome/feature/main/data/data_source/remote_data_source/i_remote_data_source.dart';
+import 'package:flutter_smarthome/feature/main/data/data_source/remote_data_source/remote_data_source.dart';
+import 'package:flutter_smarthome/feature/main/data/repository/local_repository.dart';
+import 'package:flutter_smarthome/feature/main/data/repository/remote_repository.dart';
+import 'package:flutter_smarthome/feature/main/domain/repository/i_local_repository.dart';
+import 'package:flutter_smarthome/feature/main/domain/repository/i_remote_repository.dart';
 import 'package:flutter_smarthome/feature/auth/domain/usecase/is_signed_in_usecase.dart';
 import 'package:flutter_smarthome/feature/auth/domain/usecase/log_in_by_biometrics.dart';
 import 'package:flutter_smarthome/feature/auth/presentation/bloc/auth_cubit.dart';
+import 'package:flutter_smarthome/feature/main/presentation/bloc/main_bloc.dart';
+import 'package:flutter_smarthome/feature/main/domain/usecase/get_devices_to_rooms_map_usecase.dart';
+import 'package:flutter_smarthome/feature/main/domain/usecase/get_main_page_list_usecase.dart';
+import 'package:flutter_smarthome/feature/main/domain/usecase/get_socket_stream_usecase.dart';
+import 'package:flutter_smarthome/feature/main/domain/usecase/get_user_avatar_usecase.dart';
+import 'package:flutter_smarthome/feature/main/domain/usecase/get_user_usecase.dart';
+import 'package:flutter_smarthome/feature/main/domain/usecase/is_devices_map_exists_usecase.dart';
+import 'package:flutter_smarthome/feature/main/domain/usecase/is_main_page_list_exists_usecase.dart';
+import 'package:flutter_smarthome/feature/main/domain/usecase/save_user_avatar_usecase.dart';
+import 'package:flutter_smarthome/feature/main/domain/usecase/set_devices_map.dart';
+import 'package:flutter_smarthome/feature/main/domain/usecase/set_main_page_list_usecase.dart';
+import 'package:flutter_smarthome/feature/main/domain/usecase/set_user_usecase.dart';
 import 'package:flutter_smarthome/main.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:local_auth/local_auth.dart';
 
-class ServiceLocator {
-  static final i = ServiceLocator._();
-  ServiceLocator._();
-  late final myApp = MyApp(appRouter: appRouter);
-  late final AuthCubit authCubit = AuthCubit(
-      isSignedIn: isSignedIn,
-      localDataSource: localDataSource,
-      loginUsecase: loginUsecase);
+const FlutterSecureStorage _secureStorage = FlutterSecureStorage();
+final GetStorage _getStorage = GetStorage();
+final AppRouter _appRouter = AppRouter();
+final LocalAuthentication _localAuth = LocalAuthentication();
+
+class AuthServiceLocator {
+  static final i = AuthServiceLocator._();
+
+  AuthServiceLocator._();
+
+  late final myApp = MyApp(appRouter: _appRouter);
+  late final AuthCubit authCubit =
+      AuthCubit(isSignedIn: isSignedIn, loginUsecase: loginUsecase);
   late final IsSignedIn isSignedIn = IsSignedIn(localRepository);
   late final LoginUsecase loginUsecase =
       LoginUsecase(localRepository: localRepository);
-  late final ILocalRepository localRepository =
-      LocalRepository(localDataSource: localDataSource);
+  late final ILocalRepositoryAuth localRepository =
+      LocalRepositoryAuth(localDataSource: localDataSource);
 
-  late final ILocalDataSource localDataSource =
-      LocalDataSource(authentication: localAuth, secureStorage: secureStorage);
-  late final AppRouter appRouter = AppRouter();
-  late final LocalAuthentication localAuth = LocalAuthentication();
-  late final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+  late final ILocalDataSourceAuth localDataSource = LocalDataSourceAuth(
+      authentication: _localAuth,
+      secureStorage: _secureStorage,
+      getStorage: _getStorage);
+}
+
+class MainServiceLocator {
+  static final i = MainServiceLocator._();
+
+  MainServiceLocator._();
+
+  late final MainBloc mainBloc = MainBloc(
+      isDevicesMapExists: _isDevicesMapExists,
+      setDevicesMap: _setDevicesMap,
+      getDevicesToRooms: _getDevicesToRooms,
+      isMainPageListExists: _isMainPageListExists,
+      setMainPageList: _setMainPageList,
+      getMainPageList: _getMainPageList,
+      getSocketStream: _getSocketStream,
+      getUserAvatar: _getUserAvatar,
+      getUser: _getUser,
+      saveUserAvatar: _saveUserAvatar,
+      setUser: _setUser,
+      controller: _controller);
+
+  late final SetDevicesMapUsecase _setDevicesMap =
+      SetDevicesMapUsecase(_localRepository);
+  late final GetDevicesToRoomsMapUsecase _getDevicesToRooms =
+      GetDevicesToRoomsMapUsecase(_localRepository);
+  late final IsMainPageListExistsUsecase _isMainPageListExists =
+      IsMainPageListExistsUsecase(_localRepository);
+  late final SetMainPageListUsecase _setMainPageList =
+      SetMainPageListUsecase(_localRepository);
+  late final GetMainPageListUsecase _getMainPageList =
+      GetMainPageListUsecase(_localRepository);
+  late final GetSocketStreamUsecase _getSocketStream =
+      GetSocketStreamUsecase(_remoteRepository);
+  late final GetUserAvatarUsecase _getUserAvatar =
+      GetUserAvatarUsecase(_localRepository);
+  late final GetUserUsecase _getUser = GetUserUsecase(_localRepository);
+  late final SaveUserAvatarUsecase _saveUserAvatar =
+      SaveUserAvatarUsecase(_localRepository);
+  late final SetUserUsecase _setUser = SetUserUsecase(_localRepository);
+  final PageController _controller = PageController();
+
+  late final IRemoteRepository _remoteRepository =
+      RemoteRepository(_remoteDataSource);
+  late final IRemoteDataSource _remoteDataSource = RemoteDataSource();
+  late final IsDevicesMapExistsUsecase _isDevicesMapExists =
+      IsDevicesMapExistsUsecase(_localRepository);
+  late final ILocalRepository _localRepository =
+      LocalRepository(_localDataSource);
+  late final ILocalDataSource _localDataSource =
+      LocalDataSource(_secureStorage, _getStorage);
 }

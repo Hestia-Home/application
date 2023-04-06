@@ -1,4 +1,5 @@
 abstract class IRemoteDataSource {
-  Stream get sensorStream;
+  Stream get deviceStream;
   void setTargetTemperatureInWeatherStation(double targetTemperature);
+  void dispose() {}
 }

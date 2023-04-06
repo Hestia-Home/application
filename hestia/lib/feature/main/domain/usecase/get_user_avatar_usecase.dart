@@ -6,5 +6,5 @@ class GetUserAvatarUsecase {
 
   const GetUserAvatarUsecase(this._localRepository);
 
-  Future<Image> call() async => _localRepository.getUserAvatarImage();
+  Future<ImageProvider> call() async => _localRepository.getUserAvatarImage();
 }

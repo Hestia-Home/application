@@ -1,7 +1,7 @@
 import 'package:flutter_smarthome/feature/auth/data/data_source/remote_data_source/i_remote_data_source.dart';
 
 class RegisterNewUserUsecase {
-  IRemoteDataSource remoteDataSource;
+  IRemoteDataSourceAuth remoteDataSource;
   RegisterNewUserUsecase({required this.remoteDataSource});
 
   void call(

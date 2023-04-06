@@ -5,5 +5,7 @@ class GetSocketStreamUsecase {
 
   const GetSocketStreamUsecase(this._remoteRepository);
 
-  Stream call() => _remoteRepository.sensorStream;
+  Stream call() => _remoteRepository.deviceStream;
+
+  void dispose() => _remoteRepository.dispose();
 }

@@ -3,15 +3,14 @@
 import 'package:equatable/equatable.dart';
 
 class TemperatureSensorEntity extends Equatable {
-  final String roomName;
   final int sensorId;
-  double temperature;
+  final double temperature;
 
-  TemperatureSensorEntity(
-      {required this.sensorId,
-      required this.temperature,
-      required this.roomName});
+  const TemperatureSensorEntity({
+    required this.sensorId,
+    required this.temperature,
+  });
 
   @override
-  List<Object?> get props => [sensorId, temperature, roomName];
+  List<Object?> get props => [sensorId, temperature];
 }

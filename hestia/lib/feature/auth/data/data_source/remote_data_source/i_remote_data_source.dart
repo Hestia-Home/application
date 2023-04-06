@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-abstract class IRemoteDataSource {
+abstract class IRemoteDataSourceAuth {
   Future<Response> registerNewUser(
       {required String username,
       required String password,

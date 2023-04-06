@@ -1,4 +1,4 @@
-abstract class IRemoteRepository {
+abstract class IRemoteRepositoryAuth {
   Future<void> registerNewUser(
       {required String username,
       required String email,

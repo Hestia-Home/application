@@ -6,10 +6,13 @@ class RemoteRepository implements IRemoteRepository {
   RemoteRepository(this._remoteDataSource);
 
   @override
-  Stream get sensorStream => _remoteDataSource.sensorStream;
+  Stream get deviceStream => _remoteDataSource.deviceStream;
 
   @override
   void setTargetTemperatureInWeatherStation(double targetTemperature) {
     _remoteDataSource.setTargetTemperatureInWeatherStation(targetTemperature);
   }
+
+  @override
+  void dispose() => _remoteDataSource.dispose();
 }

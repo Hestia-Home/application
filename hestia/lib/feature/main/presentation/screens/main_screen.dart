@@ -1,4 +1,8 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_smarthome/feature/main/presentation/bloc/main_bloc.dart';
+import 'package:flutter_smarthome/feature/main/presentation/bloc/main_bloc_states.dart';
 import 'package:flutter_smarthome/feature/main/presentation/widgets/page_view_indicator.dart';
 import 'package:flutter_smarthome/feature/main/presentation/widgets/room_view.dart';
 // ignore: depend_on_referenced_packages
@@ -7,22 +11,10 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 // Test data will be replaced soon
-const user = "Станислав Моисеев";
-final DateTime dateTime = DateTime.now();
-const List<String> rooms = [
-  "Кухня",
-  "Спальня 1",
-  "Гостинная",
-  "Спальня 2",
-  "Спальня 4",
-  "Спальня 3"
-];
 
 class MainScreen extends StatefulWidget {
-  late final controller = PageController();
-  MainScreen({
-    super.key, //required this.image
-  });
+  final MainBloc mainBloc;
+  const MainScreen({super.key, required this.mainBloc});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -30,50 +22,87 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   @override
+  void initState() {
+    widget.mainBloc;
+    super.initState();
+  }
+
+  @override
   void dispose() {
-    widget.controller.dispose();
+    widget.mainBloc.controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    initializeDateFormatting();
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        elevation: 0,
-        toolbarHeight: 70,
-        shadowColor: Colors.white,
-        backgroundColor: Colors.white,
-        leadingWidth: double.maxFinite,
-        leading: userComponent(
-            image: const AssetImage(
-              "assets/main/user_image.jpg",
-            ),
-            userName: user),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(35),
-          child: SingleChildScrollView(
-            child: PageViewIndicator(
-                roomsNames: rooms, controller: widget.controller),
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          elevation: 0,
+          toolbarHeight: 70,
+          shadowColor: Colors.white,
+          backgroundColor: Colors.white,
+          leadingWidth: double.maxFinite,
+          leading:
+              BlocBuilder<MainBloc, MainBlocState>(builder: (context, state) {
+            if (state is PageLoadingState) {
+              return Container();
+            } else if (state is MainPageLoadedState) {
+              return userComponent(
+                  image: state.image ??
+                      AssetImage('assets/main/empty_user_icon.jpg'),
+                  userName: state.userEntity.name,
+                  dateTime: state.currentDate);
+            } else {
+              return Container();
+            }
+          }),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(35),
+            child:
+                BlocBuilder<MainBloc, MainBlocState>(builder: (context, state) {
+              if (state is PageLoadingState) {
+                return Container();
+              } else if (state is MainPageLoadedState) {
+                return SingleChildScrollView(
+                  child: PageViewIndicator(
+                      roomsNames: state.roomList, controller: state.controller),
+                );
+              } else if (state is MainPageErrorState) {
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(state.message)));
+              }
+              return Container();
+            }),
           ),
         ),
-      ),
-      body: SafeArea(
-          child: Center(
-        child: PageView.builder(
-            controller: widget.controller,
-            itemCount: rooms.length,
-            itemBuilder: ((context, index) =>
-                const SingleChildScrollView(child: RoomView()))),
-      )),
-    );
+        body: SafeArea(
+          child: Center(child: BlocBuilder<MainBloc, MainBlocState>(
+            builder: (context, state) {
+              if (state is PageLoadingState) {
+                return const CircularProgressIndicator();
+              } else if (state is MainPageLoadedState) {
+                return PageView.builder(
+                    controller: widget.mainBloc.controller,
+                    itemCount: state.roomList.length,
+                    itemBuilder: ((context, index) => SingleChildScrollView(
+                            child: RoomView(
+                          dataStream: state.deviceDataStream,
+                          roomsNames: state.roomList[index],
+                        ))));
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            },
+          )),
+        ));
   }
 
-  Widget userComponent({
-    required ImageProvider image,
-    required String userName,
-  }) {
-    initializeDateFormatting();
+  Widget userComponent(
+      {required ImageProvider image,
+      required String userName,
+      required StreamController<DateTime> dateTime}) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Row(
@@ -109,15 +138,21 @@ class _MainScreenState extends State<MainScreen> {
                     fontSize: 20,
                     fontWeight: FontWeight.bold),
               ),
-              Text(
-                DateFormat('EEEE, d MMMM', 'ru').format(dateTime).toTitleCase(),
-                style: const TextStyle(
-                    letterSpacing: 0.8,
-                    fontFamily: "Lexend",
-                    fontSize: 14,
-                    fontWeight: FontWeight.w100,
-                    color: Color.fromARGB(255, 104, 104, 104)),
-              ),
+              StreamBuilder<DateTime>(
+                  stream: dateTime.stream,
+                  builder: (context, snapshot) {
+                    return Text(
+                      DateFormat('EEEE, d MMMM', 'ru')
+                          .format(snapshot.data ?? DateTime.now())
+                          .toTitleCase(),
+                      style: const TextStyle(
+                          letterSpacing: 0.8,
+                          fontFamily: "Lexend",
+                          fontSize: 14,
+                          fontWeight: FontWeight.w100,
+                          color: Color.fromARGB(255, 104, 104, 104)),
+                    );
+                  }),
             ],
           ),
           Expanded(
