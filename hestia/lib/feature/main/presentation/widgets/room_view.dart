@@ -34,102 +34,102 @@ class RoomView extends StatelessWidget {
   }
 
   Widget _getCardWidget(Type type) {
-    Widget cardWidget;
-    switch (type) {
-      case LightingDeviceEntity:
-        cardWidget = Card(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          elevation: 0,
-          color: const Color.fromARGB(255, 237, 237, 237),
-          child: Column(
+    Map<dynamic, Widget> map = {
+      TemperatureSensorEntity: _temperatureSensorCard(),
+      LightingDeviceEntity: _lightingDeviceCard()
+    };
+
+    return map[type] ?? const Card();
+  }
+
+  Widget _lightingDeviceCard() {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      elevation: 0,
+      color: const Color.fromARGB(255, 237, 237, 237),
+      child: Column(
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(top: 20, left: 25, bottom: 20),
+            child: Icon(
+              Icons.lightbulb_circle_rounded,
+              size: 45,
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.only(bottom: 65),
+            child: Text(
+              "Устройство освещения",
+              style: TextStyle(
+                  fontFamily: "Lexend",
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+          Row(
             children: [
-              const Padding(
-                padding: EdgeInsets.only(top: 20, left: 25, bottom: 20),
-                child: Icon(
-                  Icons.lightbulb_circle_rounded,
-                  size: 45,
-                ),
+              const Text(
+                "On",
+                style: TextStyle(
+                    fontFamily: "Lexend",
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold),
               ),
-              const Padding(
-                padding: EdgeInsets.only(bottom: 65),
-                child: Text(
-                  "Устройство освещения",
+              Expanded(
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Switch.adaptive(
+                      value: false, onChanged: (bool newValue) {}),
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _temperatureSensorCard() {
+    return Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        elevation: 0,
+        color: const Color.fromARGB(255, 237, 237, 237),
+        child: Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(top: 20, left: 25, bottom: 20),
+              child: Icon(
+                Icons.thermostat_auto,
+                size: 45,
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(bottom: 65),
+              child: Text(
+                "Датчик температуры",
+                style: TextStyle(
+                    fontFamily: "Lexend",
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            Row(
+              children: [
+                const Text(
+                  "On",
                   style: TextStyle(
                       fontFamily: "Lexend",
                       fontSize: 17,
                       fontWeight: FontWeight.bold),
                 ),
-              ),
-              Row(
-                children: [
-                  const Text(
-                    "On",
-                    style: TextStyle(
-                        fontFamily: "Lexend",
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Expanded(
+                Expanded(
                     child: Align(
-                      alignment: Alignment.topCenter,
-                      child: Switch.adaptive(
-                          value: false, onChanged: (bool newValue) {}),
-                    ),
-                  )
-                ],
-              )
-            ],
-          ),
-        );
-        return cardWidget;
-      case TemperatureSensorEntity:
-        cardWidget = Card(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            elevation: 0,
-            color: const Color.fromARGB(255, 237, 237, 237),
-            child: Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 20, left: 25, bottom: 20),
-                  child: Icon(
-                    Icons.thermostat_auto,
-                    size: 45,
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(bottom: 65),
-                  child: Text(
-                    "Датчик температуры",
-                    style: TextStyle(
-                        fontFamily: "Lexend",
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Row(
-                  children: [
-                    const Text(
-                      "On",
-                      style: TextStyle(
-                          fontFamily: "Lexend",
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Expanded(
-                        child: Align(
-                            alignment: Alignment.topRight,
-                            child: Switch.adaptive(
-                                value: false, onChanged: (bool newValue) {})))
-                  ],
-                )
+                        alignment: Alignment.topRight,
+                        child: Switch.adaptive(
+                            value: false, onChanged: (bool newValue) {})))
               ],
-            ));
-        return cardWidget;
-      default:
-        cardWidget = const Card();
-    }
-    return cardWidget;
+            )
+          ],
+        ));
   }
 }

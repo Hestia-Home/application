@@ -12,8 +12,6 @@ class RemoteDataSource implements IRemoteDataSource {
   RemoteDataSource()
       : _channel =
             IOWebSocketChannel.connect(Uri.parse('ws://10.0.2.2:8000/ws/2')) {
-    // Temperature tracking stream from temperature sensor
-    // If no temperature sensor installed inside the room returns null
     _deviceStream = _channel.stream.map((event) {
       try {
         Map<String, dynamic> json = jsonDecode(event);

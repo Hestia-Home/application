@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    MainServiceLocator.i.mainBloc.add(PageLoadingEvent());
+    MainServiceLocator.i.mainBloc.add(const PageLoadingEvent());
     return MaterialApp(
       home: BlocProvider.value(
         value: MainServiceLocator.i.mainBloc,

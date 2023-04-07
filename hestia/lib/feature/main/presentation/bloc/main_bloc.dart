@@ -55,11 +55,9 @@ class MainBloc extends Bloc<MainBlocEvent, MainBlocState> {
     /// This list is used to create pages for each room initialized by user
 
     final bool isExists = isMainPageListExists.call();
-    if (isExists) {
-      roomList = getMainPageList.call();
-    } else {
-      roomList = ["Неопределенные устройства"];
-    }
+    roomList = isExists
+        ? getMainPageList.call()
+        : roomList = ["Неопределенные устройства"];
 
     /// Initializing `Stream` of `DateTime` values, which used to show current date and day of the week in AppBar on MainPage
     ///
@@ -87,6 +85,8 @@ class MainBloc extends Bloc<MainBlocEvent, MainBlocState> {
 
         // TODO: Add real userEntity integration
         // final UserEntity user = await getUser.call();
+
+        // !!! TEMPORARY DATA !!!
         const UserEntity _user =
             UserEntity(name: "Станислав Моисеев", isLoggedIn: true);
         // final Map<String, List<int>> initializedDevicesToRoomsMap = getDevicesToRooms.call();
@@ -94,7 +94,8 @@ class MainBloc extends Bloc<MainBlocEvent, MainBlocState> {
           "Unuassigned": [1]
         };
         final List<String> roomsList = ["Неопределенные устройства"];
-        final ImageProvider? image = null; //await getUserAvatar.call();
+        final ImageProvider? image = AssetImage(
+            'assets/main/user_image.jpg'); //await getUserAvatar.call();
 
         emit(MainPageLoadedState(
             userEntity: _user,
