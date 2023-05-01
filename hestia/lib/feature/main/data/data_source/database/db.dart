@@ -5,7 +5,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 part 'db.g.dart';
 
-/// Room, consistent of only unique roomName
 class Rooms extends Table {
   TextColumn get roomName => text()();
   IntColumn get id => integer().autoIncrement()();
@@ -42,13 +41,13 @@ class HestiaDB extends _$HestiaDB {
     await into(smartDevices).insertOnConflictUpdate(device);
   }
 
-  Future<void> changeDeviceRoomAttachment(String roomName, int id) async {
+  Future<void> changeDeviceRoomAttachment(int roomId, int id) async {
     /// Getting instance of device from db and making a copy of it with new selected [roomName]
     final deviceToChange = await (select(smartDevices)
           ..where((device) => device.id.equals(id)))
         .getSingle();
 
-    final newDevice = deviceToChange.copyWith(roomName: roomName);
+    final newDevice = deviceToChange.copyWith(roomId: roomId);
 
     /// Updating table with new device info
     await update(smartDevices).replace(newDevice);

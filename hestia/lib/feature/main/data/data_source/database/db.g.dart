@@ -14,8 +14,17 @@ class $RoomsTable extends Rooms with TableInfo<$RoomsTable, Room> {
   late final GeneratedColumn<String> roomName = GeneratedColumn<String>(
       'room_name', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  List<GeneratedColumn> get $columns => [roomName];
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  @override
+  List<GeneratedColumn> get $columns => [roomName, id];
   @override
   String get aliasedName => _alias ?? 'rooms';
   @override
@@ -31,17 +40,22 @@ class $RoomsTable extends Rooms with TableInfo<$RoomsTable, Room> {
     } else if (isInserting) {
       context.missing(_roomNameMeta);
     }
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
     return context;
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {roomName};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Room map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Room(
       roomName: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}room_name'])!,
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
     );
   }
 
@@ -53,17 +67,20 @@ class $RoomsTable extends Rooms with TableInfo<$RoomsTable, Room> {
 
 class Room extends DataClass implements Insertable<Room> {
   final String roomName;
-  const Room({required this.roomName});
+  final int id;
+  const Room({required this.roomName, required this.id});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['room_name'] = Variable<String>(roomName);
+    map['id'] = Variable<int>(id);
     return map;
   }
 
   RoomsCompanion toCompanion(bool nullToAbsent) {
     return RoomsCompanion(
       roomName: Value(roomName),
+      id: Value(id),
     );
   }
 
@@ -72,6 +89,7 @@ class Room extends DataClass implements Insertable<Room> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Room(
       roomName: serializer.fromJson<String>(json['roomName']),
+      id: serializer.fromJson<int>(json['id']),
     );
   }
   @override
@@ -79,53 +97,56 @@ class Room extends DataClass implements Insertable<Room> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'roomName': serializer.toJson<String>(roomName),
+      'id': serializer.toJson<int>(id),
     };
   }
 
-  Room copyWith({String? roomName}) => Room(
+  Room copyWith({String? roomName, int? id}) => Room(
         roomName: roomName ?? this.roomName,
+        id: id ?? this.id,
       );
   @override
   String toString() {
     return (StringBuffer('Room(')
-          ..write('roomName: $roomName')
+          ..write('roomName: $roomName, ')
+          ..write('id: $id')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => roomName.hashCode;
+  int get hashCode => Object.hash(roomName, id);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Room && other.roomName == this.roomName);
+      (other is Room && other.roomName == this.roomName && other.id == this.id);
 }
 
 class RoomsCompanion extends UpdateCompanion<Room> {
   final Value<String> roomName;
-  final Value<int> rowid;
+  final Value<int> id;
   const RoomsCompanion({
     this.roomName = const Value.absent(),
-    this.rowid = const Value.absent(),
+    this.id = const Value.absent(),
   });
   RoomsCompanion.insert({
     required String roomName,
-    this.rowid = const Value.absent(),
+    this.id = const Value.absent(),
   }) : roomName = Value(roomName);
   static Insertable<Room> custom({
     Expression<String>? roomName,
-    Expression<int>? rowid,
+    Expression<int>? id,
   }) {
     return RawValuesInsertable({
       if (roomName != null) 'room_name': roomName,
-      if (rowid != null) 'rowid': rowid,
+      if (id != null) 'id': id,
     });
   }
 
-  RoomsCompanion copyWith({Value<String>? roomName, Value<int>? rowid}) {
+  RoomsCompanion copyWith({Value<String>? roomName, Value<int>? id}) {
     return RoomsCompanion(
       roomName: roomName ?? this.roomName,
-      rowid: rowid ?? this.rowid,
+      id: id ?? this.id,
     );
   }
 
@@ -135,8 +156,8 @@ class RoomsCompanion extends UpdateCompanion<Room> {
     if (roomName.present) {
       map['room_name'] = Variable<String>(roomName.value);
     }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
     }
     return map;
   }
@@ -145,7 +166,7 @@ class RoomsCompanion extends UpdateCompanion<Room> {
   String toString() {
     return (StringBuffer('RoomsCompanion(')
           ..write('roomName: $roomName, ')
-          ..write('rowid: $rowid')
+          ..write('id: $id')
           ..write(')'))
         .toString();
   }
@@ -177,17 +198,16 @@ class $SmartDevicesTable extends SmartDevices
   late final GeneratedColumn<String> data = GeneratedColumn<String>(
       'data', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _roomNameMeta =
-      const VerificationMeta('roomName');
+  static const VerificationMeta _roomIdMeta = const VerificationMeta('roomId');
   @override
-  late final GeneratedColumn<String> roomName = GeneratedColumn<String>(
-      'room_name', aliasedName, false,
-      type: DriftSqlType.string,
+  late final GeneratedColumn<int> roomId = GeneratedColumn<int>(
+      'room_id', aliasedName, false,
+      type: DriftSqlType.int,
       requiredDuringInsert: true,
       defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES rooms (room_name)'));
+          GeneratedColumn.constraintIsAlways('REFERENCES rooms (id)'));
   @override
-  List<GeneratedColumn> get $columns => [id, deviceType, data, roomName];
+  List<GeneratedColumn> get $columns => [id, deviceType, data, roomId];
   @override
   String get aliasedName => _alias ?? 'smart_devices';
   @override
@@ -214,11 +234,11 @@ class $SmartDevicesTable extends SmartDevices
     } else if (isInserting) {
       context.missing(_dataMeta);
     }
-    if (data.containsKey('room_name')) {
-      context.handle(_roomNameMeta,
-          roomName.isAcceptableOrUnknown(data['room_name']!, _roomNameMeta));
+    if (data.containsKey('room_id')) {
+      context.handle(_roomIdMeta,
+          roomId.isAcceptableOrUnknown(data['room_id']!, _roomIdMeta));
     } else if (isInserting) {
-      context.missing(_roomNameMeta);
+      context.missing(_roomIdMeta);
     }
     return context;
   }
@@ -235,8 +255,8 @@ class $SmartDevicesTable extends SmartDevices
           .read(DriftSqlType.int, data['${effectivePrefix}device_type'])!,
       data: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}data'])!,
-      roomName: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}room_name'])!,
+      roomId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}room_id'])!,
     );
   }
 
@@ -250,19 +270,19 @@ class Devices extends DataClass implements Insertable<Devices> {
   final int id;
   final int deviceType;
   final String data;
-  final String roomName;
+  final int roomId;
   const Devices(
       {required this.id,
       required this.deviceType,
       required this.data,
-      required this.roomName});
+      required this.roomId});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['device_type'] = Variable<int>(deviceType);
     map['data'] = Variable<String>(data);
-    map['room_name'] = Variable<String>(roomName);
+    map['room_id'] = Variable<int>(roomId);
     return map;
   }
 
@@ -271,7 +291,7 @@ class Devices extends DataClass implements Insertable<Devices> {
       id: Value(id),
       deviceType: Value(deviceType),
       data: Value(data),
-      roomName: Value(roomName),
+      roomId: Value(roomId),
     );
   }
 
@@ -282,7 +302,7 @@ class Devices extends DataClass implements Insertable<Devices> {
       id: serializer.fromJson<int>(json['id']),
       deviceType: serializer.fromJson<int>(json['deviceType']),
       data: serializer.fromJson<String>(json['data']),
-      roomName: serializer.fromJson<String>(json['roomName']),
+      roomId: serializer.fromJson<int>(json['roomId']),
     );
   }
   @override
@@ -292,17 +312,16 @@ class Devices extends DataClass implements Insertable<Devices> {
       'id': serializer.toJson<int>(id),
       'deviceType': serializer.toJson<int>(deviceType),
       'data': serializer.toJson<String>(data),
-      'roomName': serializer.toJson<String>(roomName),
+      'roomId': serializer.toJson<int>(roomId),
     };
   }
 
-  Devices copyWith(
-          {int? id, int? deviceType, String? data, String? roomName}) =>
+  Devices copyWith({int? id, int? deviceType, String? data, int? roomId}) =>
       Devices(
         id: id ?? this.id,
         deviceType: deviceType ?? this.deviceType,
         data: data ?? this.data,
-        roomName: roomName ?? this.roomName,
+        roomId: roomId ?? this.roomId,
       );
   @override
   String toString() {
@@ -310,13 +329,13 @@ class Devices extends DataClass implements Insertable<Devices> {
           ..write('id: $id, ')
           ..write('deviceType: $deviceType, ')
           ..write('data: $data, ')
-          ..write('roomName: $roomName')
+          ..write('roomId: $roomId')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, deviceType, data, roomName);
+  int get hashCode => Object.hash(id, deviceType, data, roomId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -324,39 +343,39 @@ class Devices extends DataClass implements Insertable<Devices> {
           other.id == this.id &&
           other.deviceType == this.deviceType &&
           other.data == this.data &&
-          other.roomName == this.roomName);
+          other.roomId == this.roomId);
 }
 
 class SmartDevicesCompanion extends UpdateCompanion<Devices> {
   final Value<int> id;
   final Value<int> deviceType;
   final Value<String> data;
-  final Value<String> roomName;
+  final Value<int> roomId;
   const SmartDevicesCompanion({
     this.id = const Value.absent(),
     this.deviceType = const Value.absent(),
     this.data = const Value.absent(),
-    this.roomName = const Value.absent(),
+    this.roomId = const Value.absent(),
   });
   SmartDevicesCompanion.insert({
     this.id = const Value.absent(),
     required int deviceType,
     required String data,
-    required String roomName,
+    required int roomId,
   })  : deviceType = Value(deviceType),
         data = Value(data),
-        roomName = Value(roomName);
+        roomId = Value(roomId);
   static Insertable<Devices> custom({
     Expression<int>? id,
     Expression<int>? deviceType,
     Expression<String>? data,
-    Expression<String>? roomName,
+    Expression<int>? roomId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (deviceType != null) 'device_type': deviceType,
       if (data != null) 'data': data,
-      if (roomName != null) 'room_name': roomName,
+      if (roomId != null) 'room_id': roomId,
     });
   }
 
@@ -364,12 +383,12 @@ class SmartDevicesCompanion extends UpdateCompanion<Devices> {
       {Value<int>? id,
       Value<int>? deviceType,
       Value<String>? data,
-      Value<String>? roomName}) {
+      Value<int>? roomId}) {
     return SmartDevicesCompanion(
       id: id ?? this.id,
       deviceType: deviceType ?? this.deviceType,
       data: data ?? this.data,
-      roomName: roomName ?? this.roomName,
+      roomId: roomId ?? this.roomId,
     );
   }
 
@@ -385,8 +404,8 @@ class SmartDevicesCompanion extends UpdateCompanion<Devices> {
     if (data.present) {
       map['data'] = Variable<String>(data.value);
     }
-    if (roomName.present) {
-      map['room_name'] = Variable<String>(roomName.value);
+    if (roomId.present) {
+      map['room_id'] = Variable<int>(roomId.value);
     }
     return map;
   }
@@ -397,7 +416,7 @@ class SmartDevicesCompanion extends UpdateCompanion<Devices> {
           ..write('id: $id, ')
           ..write('deviceType: $deviceType, ')
           ..write('data: $data, ')
-          ..write('roomName: $roomName')
+          ..write('roomId: $roomId')
           ..write(')'))
         .toString();
   }
