@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_smarthome/core/common/domain/entity/user_entity.dart';
 import 'package:flutter_smarthome/feature/main/data/data_source/local_data_source/i_local_data_source.dart';
+import 'package:flutter_smarthome/feature/main/domain/entity/device.dart';
 import 'package:flutter_smarthome/feature/main/domain/repository/i_local_repository.dart';
 
 class LocalRepository implements ILocalRepository {
@@ -51,4 +52,8 @@ class LocalRepository implements ILocalRepository {
   @override
   void setDeviceMap(int deviceId, String roomName) =>
       _localDataSource.setDeviceMap(deviceId, roomName);
+
+  @override
+  Stream<List<Device>> devicesFromDBStream() =>
+      _localDataSource.devicesFromDBStream();
 }

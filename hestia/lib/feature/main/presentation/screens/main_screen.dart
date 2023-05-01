@@ -21,6 +21,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  late PageController _controller = PageController();
   @override
   void initState() {
     widget.mainBloc;
@@ -29,7 +30,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void dispose() {
-    widget.mainBloc.controller.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -67,7 +68,7 @@ class _MainScreenState extends State<MainScreen> {
               } else if (state is MainPageLoadedState) {
                 return SingleChildScrollView(
                   child: PageViewIndicator(
-                      roomsNames: state.roomList, controller: state.controller),
+                      roomsNames: state.roomList, controller: _controller),
                 );
               } else if (state is MainPageErrorState) {
                 ScaffoldMessenger.of(context)
@@ -84,7 +85,7 @@ class _MainScreenState extends State<MainScreen> {
                 return const CircularProgressIndicator();
               } else if (state is MainPageLoadedState) {
                 return PageView.builder(
-                    controller: widget.mainBloc.controller,
+                    controller: _controller,
                     itemCount: state.roomList.length,
                     itemBuilder: ((context, index) => SingleChildScrollView(
                             child: RoomView(

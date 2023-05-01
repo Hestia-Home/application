@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_smarthome/core/common/domain/entity/user_entity.dart';
+import 'package:flutter_smarthome/feature/main/domain/entity/device.dart';
 
 abstract class ILocalRepository {
   Future<void> setUser(
@@ -15,4 +16,5 @@ abstract class ILocalRepository {
   Map<String, List<int>> getInitializedDevicesToRoomsMap();
   void setDeviceMap(int deviceId, String roomName);
   bool isDevicesMapExists();
+  Stream<List<Device>> devicesFromDBStream();
 }

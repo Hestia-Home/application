@@ -2,15 +2,16 @@
 
 import 'package:equatable/equatable.dart';
 
-class TemperatureSensorEntity extends Equatable {
-  final int sensorId;
+import 'device.dart';
+
+class TemperatureSensorEntity extends Device with EquatableMixin {
   final double temperature;
 
   const TemperatureSensorEntity({
-    required this.sensorId,
+    required super.id,
     required this.temperature,
   });
 
   @override
-  List<Object?> get props => [sensorId, temperature];
+  List<Object?> get props => [id, temperature];
 }

@@ -5,6 +5,7 @@ import 'package:flutter_smarthome/feature/auth/data/data_source/local_data_sourc
 import 'package:flutter_smarthome/feature/auth/data/data_source/local_data_source/local_data_source.dart';
 import 'package:flutter_smarthome/feature/auth/data/repository/local_repository.dart';
 import 'package:flutter_smarthome/feature/auth/domain/repository/i_local_repository.dart';
+import 'package:flutter_smarthome/feature/main/data/data_source/database/db.dart';
 import 'package:flutter_smarthome/feature/main/data/data_source/local_data_source/i_local_data_source.dart';
 import 'package:flutter_smarthome/feature/main/data/data_source/local_data_source/local_data_source.dart';
 import 'package:flutter_smarthome/feature/main/data/data_source/remote_data_source/i_remote_data_source.dart';
@@ -73,8 +74,7 @@ class MainServiceLocator {
       getUserAvatar: _getUserAvatar,
       getUser: _getUser,
       saveUserAvatar: _saveUserAvatar,
-      setUser: _setUser,
-      controller: _controller);
+      setUser: _setUser);
 
   late final SetDevicesMapUsecase _setDevicesMap =
       SetDevicesMapUsecase(_localRepository);
@@ -87,7 +87,7 @@ class MainServiceLocator {
   late final GetMainPageListUsecase _getMainPageList =
       GetMainPageListUsecase(_localRepository);
   late final GetSocketStreamUsecase _getSocketStream =
-      GetSocketStreamUsecase(_remoteRepository);
+      GetSocketStreamUsecase(_localRepository);
   late final GetUserAvatarUsecase _getUserAvatar =
       GetUserAvatarUsecase(_localRepository);
   late final GetUserUsecase _getUser = GetUserUsecase(_localRepository);
@@ -98,11 +98,13 @@ class MainServiceLocator {
 
   late final IRemoteRepository _remoteRepository =
       RemoteRepository(_remoteDataSource);
-  late final IRemoteDataSource _remoteDataSource = RemoteDataSource();
+  late final IRemoteDataSource _remoteDataSource =
+      RemoteDataSource(_localDataSource);
   late final IsDevicesMapExistsUsecase _isDevicesMapExists =
       IsDevicesMapExistsUsecase(_localRepository);
   late final ILocalRepository _localRepository =
       LocalRepository(_localDataSource);
   late final ILocalDataSource _localDataSource =
-      LocalDataSource(_secureStorage, _getStorage);
+      LocalDataSource(_secureStorage, _getStorage, _hestiaDB);
+  late final HestiaDB _hestiaDB = HestiaDB();
 }

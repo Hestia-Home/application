@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_smarthome/core/common/domain/entity/user_entity.dart';
+import 'package:flutter_smarthome/feature/main/domain/entity/device.dart';
 import 'package:flutter_smarthome/feature/main/domain/usecase/get_devices_to_rooms_map_usecase.dart';
 import 'package:flutter_smarthome/feature/main/domain/usecase/get_main_page_list_usecase.dart';
 import 'package:flutter_smarthome/feature/main/domain/usecase/get_socket_stream_usecase.dart';
@@ -22,8 +23,7 @@ class MainBloc extends Bloc<MainBlocEvent, MainBlocState> {
   final GetUserUsecase getUser;
   final SaveUserAvatarUsecase saveUserAvatar;
   final SetUserUsecase setUser;
-  final Stream deviceDataStream;
-  final PageController controller;
+  final Stream<List<Device>> deviceDataStream;
   final IsMainPageListExistsUsecase isMainPageListExists;
   final SetMainPageListUsecase setMainPageList;
   final GetDevicesToRoomsMapUsecase getDevicesToRooms;
@@ -44,8 +44,7 @@ class MainBloc extends Bloc<MainBlocEvent, MainBlocState> {
       required this.getUserAvatar,
       required this.getUser,
       required this.saveUserAvatar,
-      required this.setUser,
-      required this.controller})
+      required this.setUser})
       : deviceDataStream = getSocketStream.call().asBroadcastStream(),
         super(const InitState()) {
     /// Initialising `roomList`
@@ -86,7 +85,7 @@ class MainBloc extends Bloc<MainBlocEvent, MainBlocState> {
         // TODO: Add real userEntity integration
         // final UserEntity user = await getUser.call();
 
-        // !!! TEMPORARY DATA !!!
+        // !!! TEMPORARY DATA FOR TESTING !!!
         const UserEntity _user =
             UserEntity(name: "Станислав Моисеев", isLoggedIn: true);
         // final Map<String, List<int>> initializedDevicesToRoomsMap = getDevicesToRooms.call();
@@ -99,7 +98,6 @@ class MainBloc extends Bloc<MainBlocEvent, MainBlocState> {
 
         emit(MainPageLoadedState(
             userEntity: _user,
-            controller: controller,
             currentDate: currentDate,
             roomList: roomsList,
             initializedDeivcesToRoomsMap: initializedDevicesToRoomsMap,
@@ -128,10 +126,5 @@ class MainBloc extends Bloc<MainBlocEvent, MainBlocState> {
   void addNewUserAvatar() async {
     await saveUserAvatar.call();
     add(const PageLoadingEvent());
-  }
-
-  void dispose() {
-    controller.dispose();
-    getSocketStream.dispose();
   }
 }

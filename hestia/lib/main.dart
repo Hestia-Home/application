@@ -4,11 +4,9 @@ import 'package:flutter_smarthome/core/di/service_locator.dart';
 import 'package:flutter_smarthome/core/navigation/app_router/app_router.gr.dart';
 import 'package:flutter_smarthome/feature/main/presentation/bloc/main_bloc_events.dart';
 import 'package:flutter_smarthome/feature/main/presentation/screens/main_screen.dart';
-import 'feature/auth/presentation/bloc/auth_cubit.dart';
-import 'package:get_storage/get_storage.dart';
 
 void main() async {
-  await GetStorage.init();
+  // await GetStorage.init();
   runApp(BlocProvider.value(
     value: AuthServiceLocator.i.authCubit,
     child: AuthServiceLocator.i.myApp,

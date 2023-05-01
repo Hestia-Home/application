@@ -31,11 +31,9 @@ class AppRouter extends _i6.RootStackRouter {
   @override
   final Map<String, _i6.PageFactory> pagesMap = {
     StartAppSplashRoute.name: (routeData) {
-      final args = routeData.argsAs<StartAppSplashRouteArgs>(
-          orElse: () => const StartAppSplashRouteArgs());
       return _i6.MaterialPageX<dynamic>(
         routeData: routeData,
-        child: _i1.StartAppSplashScreen(key: args.key),
+        child: const _i1.StartAppSplashScreen(),
       );
     },
     SplashRouter.name: (routeData) {
@@ -95,26 +93,14 @@ class AppRouter extends _i6.RootStackRouter {
 
 /// generated route for
 /// [_i1.StartAppSplashScreen]
-class StartAppSplashRoute extends _i6.PageRouteInfo<StartAppSplashRouteArgs> {
-  StartAppSplashRoute({_i7.Key? key})
+class StartAppSplashRoute extends _i6.PageRouteInfo<void> {
+  const StartAppSplashRoute()
       : super(
           StartAppSplashRoute.name,
           path: '/',
-          args: StartAppSplashRouteArgs(key: key),
         );
 
   static const String name = 'StartAppSplashRoute';
-}
-
-class StartAppSplashRouteArgs {
-  const StartAppSplashRouteArgs({this.key});
-
-  final _i7.Key? key;
-
-  @override
-  String toString() {
-    return 'StartAppSplashRouteArgs{key: $key}';
-  }
 }
 
 /// generated route for

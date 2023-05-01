@@ -49,6 +49,12 @@ dependencies:
   dio: ^5.0.3
   syncfusion_flutter_charts: ^21.1.37
   get_storage: ^2.1.1
+  salomon_bottom_bar: ^3.3.2
+  mobx: ^2.1.4
+  drift: ^2.7.0
+  sqlite3_flutter_libs: ^0.5.0
+  path:
+  mobx_widget: ^0.5.1
 
 dev_dependencies:
   flutter_test:
@@ -62,6 +68,8 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   auto_route_generator: ^5.0.3
   build_runner: ^2.3.3
+  drift_dev: ^2.7.0
+  mobx_codegen: ^2.1.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
