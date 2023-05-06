@@ -1,14 +1,13 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_smarthome/feature/main/data/model/lighting_device_model.dart';
 import 'package:flutter_smarthome/feature/main/data/model/sensor_model.dart';
 import 'package:flutter_smarthome/feature/main/domain/entity/device.dart';
+import 'package:mobx/mobx.dart';
+import 'package:mobx_widget/mobx_widget.dart';
 
 class RoomView extends StatelessWidget {
-  final Stream<List<Device>> dataStream;
-  final String roomsNames;
-  const RoomView(
-      {super.key, required this.dataStream, required this.roomsNames});
+  final ObservableStream<List<Device>> dataStream;
+  const RoomView({super.key, required this.dataStream});
 
   @override
   Widget build(BuildContext context) {
@@ -16,21 +15,20 @@ class RoomView extends StatelessWidget {
       height: MediaQuery.of(context).size.height - 200,
       child: Padding(
         padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
-        child: StreamBuilder<List<Device>>(
-            stream: dataStream,
-            builder: (context, snapshot) {
-              return GridView.builder(
-                  itemCount: snapshot.data?.length,
-                  cacheExtent: 200,
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 200,
-                      crossAxisSpacing: 5,
-                      mainAxisSpacing: 5,
-                      childAspectRatio: 185 / 240),
-                  itemBuilder: (context, gridIndex) {
-                    return _getCardWidget(snapshot.data?[gridIndex]);
-                  });
-            }),
+        child: ObserverStream<List<Device>, Exception>(
+          observableStream: () => dataStream,
+          onData: (_, data) => GridView.builder(
+              itemCount: data?.length,
+              cacheExtent: 200,
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 200,
+                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 5,
+                  childAspectRatio: 185 / 240),
+              itemBuilder: (context, gridIndex) {
+                return _getCardWidget(data?[gridIndex]);
+              }),
+        ),
       ),
     );
   }

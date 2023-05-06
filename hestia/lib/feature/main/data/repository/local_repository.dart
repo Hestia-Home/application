@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_smarthome/core/common/domain/entity/user_entity.dart';
 import 'package:flutter_smarthome/feature/main/data/data_source/local_data_source/i_local_data_source.dart';
 import 'package:flutter_smarthome/feature/main/domain/entity/device.dart';
+import 'package:flutter_smarthome/feature/main/domain/entity/room_entity.dart';
 import 'package:flutter_smarthome/feature/main/domain/repository/i_local_repository.dart';
 
 class LocalRepository implements ILocalRepository {
@@ -10,7 +11,7 @@ class LocalRepository implements ILocalRepository {
   const LocalRepository(this._localDataSource);
 
   @override
-  Future<UserEntity> getUser() async {
+  Future<UserEntity?> getUser() async {
     return await _localDataSource.getUser();
   }
 
@@ -28,30 +29,15 @@ class LocalRepository implements ILocalRepository {
       await _localDataSource.saveUserAvatarImage();
 
   @override
-  Future<ImageProvider> getUserAvatarImage() async =>
+  Future<ImageProvider?> getUserAvatarImage() async =>
       _localDataSource.getUserAvatarImage();
 
   @override
-  List<String> getMainPageRoomList() => _localDataSource.getMainPageRoomList();
+  Stream<List<RoomEntity>> watchRoomList() => _localDataSource.watchRoomList();
 
   @override
-  bool isMainPageRoomListExists() =>
-      _localDataSource.isMainPageRoomListExists();
-
-  @override
-  void setMainPageRoomList(List<String> roomList) =>
-      _localDataSource.setMainPageRoomList(roomList);
-
-  @override
-  Map<String, List<int>> getInitializedDevicesToRoomsMap() =>
-      _localDataSource.getInitializedDevicesToRoomsMap();
-
-  @override
-  bool isDevicesMapExists() => _localDataSource.isDevicesMapExists();
-
-  @override
-  void setDeviceMap(int deviceId, String roomName) =>
-      _localDataSource.setDeviceMap(deviceId, roomName);
+  void setRoomList(List<String> roomList) =>
+      _localDataSource.setRoomList(roomList);
 
   @override
   Stream<List<Device>> devicesFromDBStream() =>

@@ -24,46 +24,51 @@ mixin _$AppBarStore on _AppBarStore, Store {
     });
   }
 
-  late final _$_dateAtom = Atom(name: '_AppBarStore._date', context: context);
+  late final _$imageAtom = Atom(name: '_AppBarStore.image', context: context);
 
-  DateTime get date {
-    _$_dateAtom.reportRead();
-    return super._date;
+  @override
+  ImageProvider<Object> get image {
+    _$imageAtom.reportRead();
+    return super.image;
   }
 
   @override
-  DateTime get _date => date;
-
-  @override
-  set _date(DateTime value) {
-    _$_dateAtom.reportWrite(value, super._date, () {
-      super._date = value;
+  set image(ImageProvider<Object> value) {
+    _$imageAtom.reportWrite(value, super.image, () {
+      super.image = value;
     });
   }
 
-  late final _$_dateStreamControllerAtom =
-      Atom(name: '_AppBarStore._dateStreamController', context: context);
+  late final _$_AppBarStoreActionController =
+      ActionController(name: '_AppBarStore', context: context);
 
-  StreamController<DateTime> get dateStreamController {
-    _$_dateStreamControllerAtom.reportRead();
-    return super._dateStreamController;
+  @override
+  void getUserAvatar() {
+    final _$actionInfo = _$_AppBarStoreActionController.startAction(
+        name: '_AppBarStore.getUserAvatar');
+    try {
+      return super.getUserAvatar();
+    } finally {
+      _$_AppBarStoreActionController.endAction(_$actionInfo);
+    }
   }
 
   @override
-  StreamController<DateTime> get _dateStreamController => dateStreamController;
-
-  @override
-  set _dateStreamController(StreamController<DateTime> value) {
-    _$_dateStreamControllerAtom.reportWrite(value, super._dateStreamController,
-        () {
-      super._dateStreamController = value;
-    });
+  void getUser() {
+    final _$actionInfo = _$_AppBarStoreActionController.startAction(
+        name: '_AppBarStore.getUser');
+    try {
+      return super.getUser();
+    } finally {
+      _$_AppBarStoreActionController.endAction(_$actionInfo);
+    }
   }
 
   @override
   String toString() {
     return '''
-user: ${user}
+user: ${user},
+image: ${image}
     ''';
   }
 }

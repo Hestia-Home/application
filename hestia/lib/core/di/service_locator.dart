@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_smarthome/core/navigation/app_router/app_router.gr.dart';
 import 'package:flutter_smarthome/feature/auth/data/data_source/local_data_source/i_local_data_source.dart';
@@ -17,18 +16,8 @@ import 'package:flutter_smarthome/feature/main/domain/repository/i_remote_reposi
 import 'package:flutter_smarthome/feature/auth/domain/usecase/is_signed_in_usecase.dart';
 import 'package:flutter_smarthome/feature/auth/domain/usecase/log_in_by_biometrics.dart';
 import 'package:flutter_smarthome/feature/auth/presentation/bloc/auth_cubit.dart';
-import 'package:flutter_smarthome/feature/main/presentation/bloc/main_bloc.dart';
-import 'package:flutter_smarthome/feature/main/domain/usecase/get_devices_to_rooms_map_usecase.dart';
-import 'package:flutter_smarthome/feature/main/domain/usecase/get_main_page_list_usecase.dart';
-import 'package:flutter_smarthome/feature/main/domain/usecase/get_socket_stream_usecase.dart';
-import 'package:flutter_smarthome/feature/main/domain/usecase/get_user_avatar_usecase.dart';
-import 'package:flutter_smarthome/feature/main/domain/usecase/get_user_usecase.dart';
-import 'package:flutter_smarthome/feature/main/domain/usecase/is_devices_map_exists_usecase.dart';
-import 'package:flutter_smarthome/feature/main/domain/usecase/is_main_page_list_exists_usecase.dart';
-import 'package:flutter_smarthome/feature/main/domain/usecase/save_user_avatar_usecase.dart';
-import 'package:flutter_smarthome/feature/main/domain/usecase/set_devices_map.dart';
-import 'package:flutter_smarthome/feature/main/domain/usecase/set_main_page_list_usecase.dart';
-import 'package:flutter_smarthome/feature/main/domain/usecase/set_user_usecase.dart';
+import 'package:flutter_smarthome/feature/main/presentation/mobx/main/appbar_store.dart';
+import 'package:flutter_smarthome/feature/main/presentation/mobx/main/main_store.dart';
 import 'package:flutter_smarthome/main.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:local_auth/local_auth.dart';
@@ -63,48 +52,17 @@ class MainServiceLocator {
 
   MainServiceLocator._();
 
-  late final MainBloc mainBloc = MainBloc(
-      isDevicesMapExists: _isDevicesMapExists,
-      setDevicesMap: _setDevicesMap,
-      getDevicesToRooms: _getDevicesToRooms,
-      isMainPageListExists: _isMainPageListExists,
-      setMainPageList: _setMainPageList,
-      getMainPageList: _getMainPageList,
-      getSocketStream: _getSocketStream,
-      getUserAvatar: _getUserAvatar,
-      getUser: _getUser,
-      saveUserAvatar: _saveUserAvatar,
-      setUser: _setUser);
-
-  late final SetDevicesMapUsecase _setDevicesMap =
-      SetDevicesMapUsecase(_localRepository);
-  late final GetDevicesToRoomsMapUsecase _getDevicesToRooms =
-      GetDevicesToRoomsMapUsecase(_localRepository);
-  late final IsMainPageListExistsUsecase _isMainPageListExists =
-      IsMainPageListExistsUsecase(_localRepository);
-  late final SetMainPageListUsecase _setMainPageList =
-      SetMainPageListUsecase(_localRepository);
-  late final GetMainPageListUsecase _getMainPageList =
-      GetMainPageListUsecase(_localRepository);
-  late final GetSocketStreamUsecase _getSocketStream =
-      GetSocketStreamUsecase(_localRepository);
-  late final GetUserAvatarUsecase _getUserAvatar =
-      GetUserAvatarUsecase(_localRepository);
-  late final GetUserUsecase _getUser = GetUserUsecase(_localRepository);
-  late final SaveUserAvatarUsecase _saveUserAvatar =
-      SaveUserAvatarUsecase(_localRepository);
-  late final SetUserUsecase _setUser = SetUserUsecase(_localRepository);
-  final PageController _controller = PageController();
-
   late final IRemoteRepository _remoteRepository =
       RemoteRepository(_remoteDataSource);
   late final IRemoteDataSource _remoteDataSource =
       RemoteDataSource(_localDataSource);
-  late final IsDevicesMapExistsUsecase _isDevicesMapExists =
-      IsDevicesMapExistsUsecase(_localRepository);
   late final ILocalRepository _localRepository =
       LocalRepository(_localDataSource);
   late final ILocalDataSource _localDataSource =
       LocalDataSource(_secureStorage, _getStorage, _hestiaDB);
   late final HestiaDB _hestiaDB = HestiaDB();
+
+  late final AppBarStore appBarStore = AppBarStore(_localRepository);
+
+  late final MainStore mainStore = MainStore(_localRepository);
 }

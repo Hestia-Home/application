@@ -4,7 +4,7 @@ import 'package:flutter_smarthome/feature/main/data/data_source/database/db.dart
 import 'package:flutter_smarthome/feature/main/domain/entity/lighting_device_entity.dart';
 
 class LightingDeviceModel extends LightingDeviceEntity {
-  const LightingDeviceModel({required super.id, required super.isOn});
+  LightingDeviceModel({required super.id, required super.isOn});
 
   factory LightingDeviceModel.fromJson(Map<String, dynamic> json) {
     return LightingDeviceModel(

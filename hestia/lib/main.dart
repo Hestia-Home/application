@@ -1,12 +1,23 @@
+import 'dart:async';
+import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_smarthome/core/di/service_locator.dart';
 import 'package:flutter_smarthome/core/navigation/app_router/app_router.gr.dart';
-import 'package:flutter_smarthome/feature/main/presentation/bloc/main_bloc_events.dart';
 import 'package:flutter_smarthome/feature/main/presentation/screens/main_screen.dart';
+import 'package:get_storage/get_storage.dart';
 
 void main() async {
-  // await GetStorage.init();
+  await GetStorage.init();
+  runZonedGuarded<void>(
+    _run,
+    (error, stackTrace) async {
+      dev.log('Unexpected error: $error\n$stackTrace');
+    },
+  );
+}
+
+_run() {
   runApp(BlocProvider.value(
     value: AuthServiceLocator.i.authCubit,
     child: AuthServiceLocator.i.myApp,
@@ -19,11 +30,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    MainServiceLocator.i.mainBloc.add(const PageLoadingEvent());
     return MaterialApp(
-      home: BlocProvider.value(
-        value: MainServiceLocator.i.mainBloc,
-        child: MainScreen(mainBloc: MainServiceLocator.i.mainBloc),
+      home: MainScreen(
+        appBarStore: MainServiceLocator.i.appBarStore,
+        mainStore: MainServiceLocator.i.mainStore,
       ),
       debugShowCheckedModeBanner: false,
     );

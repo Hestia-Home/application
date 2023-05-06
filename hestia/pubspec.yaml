@@ -49,12 +49,14 @@ dependencies:
   dio: ^5.0.3
   syncfusion_flutter_charts: ^21.1.37
   get_storage: ^2.1.1
+  shimmer_animation: ^2.1.0+1
   salomon_bottom_bar: ^3.3.2
   mobx: ^2.1.4
+  mobx_widget: ^0.5.1
+  flutter_mobx: ^2.0.6+5
   drift: ^2.7.0
   sqlite3_flutter_libs: ^0.5.0
   path:
-  mobx_widget: ^0.5.1
 
 dev_dependencies:
   flutter_test:

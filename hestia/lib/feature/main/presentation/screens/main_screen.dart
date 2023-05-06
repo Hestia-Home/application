@@ -1,30 +1,34 @@
-import 'dart:async';
+// ignore_for_file: depend_on_referenced_packages
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_smarthome/feature/main/presentation/bloc/main_bloc.dart';
-import 'package:flutter_smarthome/feature/main/presentation/bloc/main_bloc_states.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_smarthome/feature/main/presentation/mobx/main/appbar_store.dart';
+import 'package:flutter_smarthome/feature/main/presentation/mobx/main/main_store.dart';
 import 'package:flutter_smarthome/feature/main/presentation/widgets/page_view_indicator.dart';
 import 'package:flutter_smarthome/feature/main/presentation/widgets/room_view.dart';
-// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
-// ignore: depend_on_referenced_packages
 import 'package:intl/date_symbol_data_local.dart';
-
-// Test data will be replaced soon
+import 'package:mobx_widget/mobx_widget.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 
 class MainScreen extends StatefulWidget {
-  final MainBloc mainBloc;
-  const MainScreen({super.key, required this.mainBloc});
+  final MainStore mainStore;
+  final AppBarStore appBarStore;
+  const MainScreen(
+      {super.key, required this.mainStore, required this.appBarStore});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  late PageController _controller = PageController();
+  late final PageController _controller = PageController();
+
   @override
   void initState() {
-    widget.mainBloc;
+    widget.appBarStore.image;
+    widget.mainStore;
     super.initState();
   }
 
@@ -36,7 +40,12 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appBarStore = widget.appBarStore;
+    final mainStore = widget.mainStore;
     initializeDateFormatting();
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+    ));
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
@@ -45,52 +54,49 @@ class _MainScreenState extends State<MainScreen> {
           shadowColor: Colors.white,
           backgroundColor: Colors.white,
           leadingWidth: double.maxFinite,
-          leading:
-              BlocBuilder<MainBloc, MainBlocState>(builder: (context, state) {
-            if (state is PageLoadingState) {
-              return Container();
-            } else if (state is MainPageLoadedState) {
-              return userComponent(
-                  image: state.image ??
-                      AssetImage('assets/main/empty_user_icon.jpg'),
-                  userName: state.userEntity.name,
-                  dateTime: state.currentDate);
-            } else {
-              return Container();
-            }
-          }),
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(35),
-            child:
-                BlocBuilder<MainBloc, MainBlocState>(builder: (context, state) {
-              if (state is PageLoadingState) {
-                return Container();
-              } else if (state is MainPageLoadedState) {
-                return SingleChildScrollView(
-                  child: PageViewIndicator(
-                      roomsNames: state.roomList, controller: _controller),
-                );
-              } else if (state is MainPageErrorState) {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text(state.message)));
-              }
-              return Container();
-            }),
+          leading: ObserverStream<DateTime, Exception>(
+            observableStream: () => appBarStore.dateStream,
+            onData: (_, data) => _userComponent(
+                image: appBarStore.image,
+                userName: appBarStore.user.name,
+                dateTime: data!),
           ),
+          bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(15),
+              child: Observer(
+                builder: (context) {
+                  if (mainStore.isErrorState) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(mainStore.errorMessage)));
+                    });
+                  } else if (mainStore.isEmptyState) {
+                    return Center(
+                        child: Shimmer(
+                            child: Container(color: Colors.blueGrey.shade200)));
+                  } else {
+                    return SingleChildScrollView(
+                      child: PageViewIndicator(
+                          roomsNames: mainStore.roomsListStream.data,
+                          controller: _controller),
+                    );
+                  }
+                  return const SizedBox();
+                },
+              )),
         ),
         body: SafeArea(
-          child: Center(child: BlocBuilder<MainBloc, MainBlocState>(
-            builder: (context, state) {
-              if (state is PageLoadingState) {
+          child: Center(child: Observer(
+            builder: (context) {
+              if (mainStore.isEmptyState) {
                 return const CircularProgressIndicator();
-              } else if (state is MainPageLoadedState) {
+              } else if (!mainStore.isErrorState && !mainStore.isEmptyState) {
                 return PageView.builder(
                     controller: _controller,
-                    itemCount: state.roomList.length,
+                    itemCount: mainStore.roomsListStream.value!.length,
                     itemBuilder: ((context, index) => SingleChildScrollView(
                             child: RoomView(
-                          dataStream: state.deviceDataStream,
-                          roomsNames: state.roomList[index],
+                          dataStream: mainStore.devicesStream,
                         ))));
               } else {
                 return const Center(child: CircularProgressIndicator());
@@ -100,10 +106,10 @@ class _MainScreenState extends State<MainScreen> {
         ));
   }
 
-  Widget userComponent(
+  Widget _userComponent(
       {required ImageProvider image,
       required String userName,
-      required StreamController<DateTime> dateTime}) {
+      required DateTime dateTime}) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Row(
@@ -139,21 +145,15 @@ class _MainScreenState extends State<MainScreen> {
                     fontSize: 20,
                     fontWeight: FontWeight.bold),
               ),
-              StreamBuilder<DateTime>(
-                  stream: dateTime.stream,
-                  builder: (context, snapshot) {
-                    return Text(
-                      DateFormat('EEEE, d MMMM', 'ru')
-                          .format(snapshot.data ?? DateTime.now())
-                          .toTitleCase(),
-                      style: const TextStyle(
-                          letterSpacing: 0.8,
-                          fontFamily: "Lexend",
-                          fontSize: 14,
-                          fontWeight: FontWeight.w100,
-                          color: Color.fromARGB(255, 104, 104, 104)),
-                    );
-                  }),
+              Text(
+                DateFormat('EEEE, d MMMM', 'ru').format(dateTime).toTitleCase(),
+                style: const TextStyle(
+                    letterSpacing: 0.8,
+                    fontFamily: "Lexend",
+                    fontSize: 14,
+                    fontWeight: FontWeight.w100,
+                    color: Color.fromARGB(255, 104, 104, 104)),
+              ),
             ],
           ),
           Expanded(

@@ -41,6 +41,10 @@ class HestiaDB extends _$HestiaDB {
     await into(smartDevices).insertOnConflictUpdate(device);
   }
 
+  Stream<List<Room>> watchRooms() {
+    return (select(rooms).watch());
+  }
+
   Future<void> changeDeviceRoomAttachment(int roomId, int id) async {
     /// Getting instance of device from db and making a copy of it with new selected [roomName]
     final deviceToChange = await (select(smartDevices)
