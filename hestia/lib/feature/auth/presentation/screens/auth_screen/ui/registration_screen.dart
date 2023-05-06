@@ -59,7 +59,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                     logo(130, 140),
                     const SizedBox(height: 20),
-                    signInForm(),
+                    _signInForm(),
                     Container(
                         padding: const EdgeInsets.only(
                             top: 40, left: 100, right: 100),
@@ -90,7 +90,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ));
   }
 
-  Widget signInForm() {
+  Widget _signInForm() {
     return Container(
       alignment: Alignment.center,
       width: double.infinity,
@@ -99,16 +99,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           key: _formKey,
           child: Column(
             children: [
-              usernameField(),
-              emailField(),
-              passwordField(),
-              repeatPasswordField()
+              _usernameField(),
+              _emailField(),
+              _passwordField(),
+              _repeatPasswordField()
             ],
           )),
     );
   }
 
-  Widget emailField() {
+  Widget _emailField() {
     return Padding(
       padding: const EdgeInsets.only(top: 20),
       child: TextFormField(
@@ -140,7 +140,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  Widget usernameField() {
+  Widget _usernameField() {
     return TextFormField(
         textInputAction: TextInputAction.next,
         autocorrect: false,
@@ -169,7 +169,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ));
   }
 
-  Widget passwordField() {
+  Widget _passwordField() {
     return Container(
       padding: const EdgeInsets.only(top: 20),
       child: TextFormField(
@@ -200,7 +200,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  Widget repeatPasswordField() {
+  Widget _repeatPasswordField() {
     return Container(
       padding: const EdgeInsets.only(top: 20),
       child: TextFormField(

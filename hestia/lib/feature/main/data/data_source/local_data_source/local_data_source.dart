@@ -10,6 +10,7 @@ import 'package:flutter_smarthome/feature/main/data/data_source/local_data_sourc
 import 'package:flutter_smarthome/core/common/data/model/user_model.dart';
 import 'package:flutter_smarthome/feature/main/data/model/sensor_model.dart';
 import 'package:flutter_smarthome/feature/main/domain/entity/device.dart';
+import 'package:flutter_smarthome/feature/main/domain/entity/room_entity.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -55,7 +56,7 @@ class LocalDataSource implements ILocalDataSource {
   }
 
   @override
-  Future<UserEntity> getUser() async {
+  Future<UserEntity?> getUser() async {
     final userData = await _secureStorage.read(key: 'user') ?? '';
     final UserEntity user = UserModel.fromJson(jsonDecode(userData));
     return user;
@@ -80,62 +81,30 @@ class LocalDataSource implements ILocalDataSource {
   }
 
   @override
-  Future<ImageProvider> getUserAvatarImage() async {
+  Future<ImageProvider?> getUserAvatarImage() async {
     final String path = (await getApplicationDocumentsDirectory()).path;
     final bool isFileExists = io.File("$path/avatar.jpg").existsSync();
-    late final ImageProvider image;
+    late final ImageProvider? image;
     if (isFileExists) image = FileImage(File("$path/avatar.jpg"));
     return image;
   }
 
   @override
-  void setMainPageRoomList(List<String> roomList) =>
-      _getStorage.write("main_page_list", jsonEncode(roomList));
+  void setRoomList(List<String> roomList) async {}
 
   @override
-  List<String> getMainPageRoomList() {
-    final String dataList = _getStorage.read("main_page_list");
-    return jsonDecode(dataList) as List<String>;
-  }
+  Stream<List<RoomEntity>> watchRoomList() {
+    final streamFromDb = _hestiaDB.watchRooms();
 
-  @override
-  bool isMainPageRoomListExists() => _getStorage.hasData("main_page_list");
-
-  @override
-  Map<String, List<int>> getInitializedDevicesToRoomsMap() {
-    final String data = _getStorage.read('initialized_devices');
-    final Map<String, List<int>> devicesToRoomsMap =
-        jsonDecode(data) as Map<String, List<int>>;
-    return devicesToRoomsMap;
-  }
-
-  @override
-  void setDeviceMap(int deviceId, String roomName) {
-    final bool isExists = isDevicesMapExists();
-    if (isExists) {
-      Map<String, List<int>> devicesToRoomsMap =
-          getInitializedDevicesToRoomsMap();
-      final isRoomExists = devicesToRoomsMap.containsKey(roomName);
-      if (isRoomExists) {
-        List<int> devicesIdListForChosenRoom =
-            devicesToRoomsMap[roomName] ?? [];
-        devicesIdListForChosenRoom = devicesIdListForChosenRoom
-                .contains(deviceId)
-            ? devicesIdListForChosenRoom
-            : devicesIdListForChosenRoom
-          ..add(deviceId);
-        devicesToRoomsMap[roomName] = devicesIdListForChosenRoom;
-      } else {
-        List<int> devicesIdListForChosenRoom = [deviceId];
-        devicesToRoomsMap[roomName] = devicesIdListForChosenRoom;
+    final roomsStream = streamFromDb.map((event) {
+      final List<RoomEntity> list = [];
+      for (var room in event) {
+        list.add(RoomEntity(id: room.id, name: room.roomName));
       }
-    }
-  }
+      return list;
+    });
 
-  @override
-  bool isDevicesMapExists() {
-    final bool isExists = _getStorage.hasData('initialized_devices');
-    return isExists;
+    return roomsStream;
   }
 
   @override

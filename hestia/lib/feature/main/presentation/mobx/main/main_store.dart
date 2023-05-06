@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter_smarthome/feature/main/domain/entity/device.dart';
+import 'package:flutter_smarthome/feature/main/domain/entity/room_entity.dart';
 import 'package:flutter_smarthome/feature/main/domain/repository/i_local_repository.dart';
 import 'package:mobx/mobx.dart';
 import 'dart:developer' as developer;
@@ -15,9 +16,14 @@ abstract class _MainStore with Store {
   _MainStore(ILocalRepository localRepository)
       : _localRepository = localRepository {
     try {
-      _streamFromRepository = _localRepository.devicesFromDBStream();
+      _devicesStreamFromRepository = _localRepository.devicesFromDBStream();
 
-      devicesStream = ObservableStream(_streamFromRepository);
+      _roomsStreamFromRepository = _localRepository.watchRoomList();
+
+      devicesStream = ObservableStream(_devicesStreamFromRepository);
+
+      roomsListStream = ObservableStream(_roomsStreamFromRepository,
+          initialValue: [const RoomEntity(id: 0, name: "Все устройства")]);
 
       devicesStream.hasError ? _setErrorState(devicesStream.error) : null;
 
@@ -27,25 +33,42 @@ abstract class _MainStore with Store {
     }
   }
 
+  @readonly
+  late Stream<List<RoomEntity>> _roomsStreamFromRepository;
+
+  @readonly
+  late Stream<List<Device>> _devicesStreamFromRepository;
+
+  @observable
+  late ObservableStream<List<RoomEntity>> roomsListStream;
+
+  @observable
+  String errorMessage = "";
+
   @observable
   bool isErrorState = false;
 
   @observable
   bool isEmptyState = false;
 
-  @readonly
-  late Stream<List<Device>> _streamFromRepository;
-
+  @observable
   late ObservableStream<List<Device>> devicesStream;
 
   @action
-  _setErrorState(String error) {
+  void _setErrorState(String error) {
     developer.log(error);
     isErrorState = true;
+    errorMessage = error;
   }
 
   @action
-  _setEmptyState() {
+  void _setEmptyState() {
     isEmptyState = true;
+  }
+
+  @action
+  void tryAgainIfError() {
+    isErrorState = false;
+    errorMessage = '';
   }
 }
