@@ -33,14 +33,13 @@ abstract class _MainStore with Store {
     }
   }
 
-  @readonly
   late Stream<List<RoomEntity>> _roomsStreamFromRepository;
 
-  @readonly
   late Stream<List<Device>> _devicesStreamFromRepository;
 
-  @observable
   late ObservableStream<List<RoomEntity>> roomsListStream;
+
+  late ObservableStream<List<Device>> devicesStream;
 
   @observable
   String errorMessage = "";
@@ -50,9 +49,6 @@ abstract class _MainStore with Store {
 
   @observable
   bool isEmptyState = false;
-
-  @observable
-  late ObservableStream<List<Device>> devicesStream;
 
   @action
   void _setErrorState(String error) {

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_smarthome/feature/main/data/data_source/local_data_source/i_local_data_source.dart';
 import 'package:flutter_smarthome/feature/main/data/data_source/remote_data_source/i_remote_data_source.dart';
 import 'package:web_socket_channel/io.dart';
+import 'dart:developer' as dev;
 
 class RemoteDataSource implements IRemoteDataSource {
   final IOWebSocketChannel _channel;
@@ -9,11 +10,13 @@ class RemoteDataSource implements IRemoteDataSource {
   RemoteDataSource(this._localDataSource)
       : _channel =
             IOWebSocketChannel.connect(Uri.parse('ws://10.0.2.2:8000/ws/2')) {
-    _channel.stream.map((event) {
+    _channel.stream.listen((event) {
+      dev.log(event.toString());
       try {
-        Map<String, dynamic> json = jsonDecode(event);
+        Map<String, dynamic> json = jsonDecode(event.toString());
+        _localDataSource
+            .createOrUpdateRoomInfo(jsonDecode(json['room'].toString()));
         _localDataSource.createOrUpdateDeviceInfo(json);
-        _localDataSource.createOrUpdateRoomInfo(json['room']);
       } catch (e) {
         Exception(e.toString());
       }
