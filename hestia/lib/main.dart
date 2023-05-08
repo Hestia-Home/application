@@ -9,6 +9,12 @@ import 'package:get_storage/get_storage.dart';
 
 void main() async {
   await GetStorage.init();
+
+  FlutterError.onError = (FlutterErrorDetails details) async {
+    Zone.current.handleUncaughtError(
+        details.exception, StackTrace.fromString(details.stack.toString()));
+  };
+
   runZonedGuarded<void>(
     _run,
     (error, stackTrace) async {
@@ -18,6 +24,10 @@ void main() async {
 }
 
 _run() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  MainServiceLocator.i.init();
+
   runApp(BlocProvider.value(
     value: AuthServiceLocator.i.authCubit,
     child: AuthServiceLocator.i.myApp,

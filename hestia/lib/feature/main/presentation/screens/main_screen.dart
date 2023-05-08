@@ -1,7 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_smarthome/feature/main/presentation/mobx/main/appbar_store.dart';
 import 'package:flutter_smarthome/feature/main/presentation/mobx/main/main_store.dart';
@@ -9,6 +8,7 @@ import 'package:flutter_smarthome/feature/main/presentation/widgets/page_view_in
 import 'package:flutter_smarthome/feature/main/presentation/widgets/room_view.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:mobx/mobx.dart';
 import 'package:mobx_widget/mobx_widget.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
@@ -23,11 +23,10 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  late final PageController _controller = PageController();
+  final PageController _controller = PageController();
 
   @override
   void initState() {
-    widget.appBarStore.image;
     widget.mainStore;
     super.initState();
   }
@@ -55,12 +54,8 @@ class _MainScreenState extends State<MainScreen> {
           backgroundColor: Colors.white,
           leadingWidth: double.maxFinite,
           leading: ObserverStream<DateTime, Exception>(
-            observableStream: () => appBarStore.dateStream,
-            onData: (_, data) => _userComponent(
-                image: appBarStore.image,
-                userName: appBarStore.user.name,
-                dateTime: data!),
-          ),
+              observableStream: () => appBarStore.dateStream,
+              onData: (_, data) => _userComponent(appBarStore: appBarStore)),
           bottom: PreferredSize(
               preferredSize: const Size.fromHeight(15),
               child: Observer(
@@ -106,10 +101,7 @@ class _MainScreenState extends State<MainScreen> {
         ));
   }
 
-  Widget _userComponent(
-      {required ImageProvider image,
-      required String userName,
-      required DateTime dateTime}) {
+  Widget _userComponent({required AppBarStore appBarStore}) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Row(
@@ -118,14 +110,18 @@ class _MainScreenState extends State<MainScreen> {
             onTap: () {},
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15),
-              child: Container(
-                height: 45,
-                width: 45,
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                  image: image,
-                  filterQuality: FilterQuality.high,
-                )),
+              child: ObserverFuture<ImageProvider, Exception>(
+                observableFuture: () => appBarStore.image,
+                fetchData: () => appBarStore.getUserAvatar(),
+                onData: (context, data) => Container(
+                  height: 45,
+                  width: 45,
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                    image: data,
+                    filterQuality: FilterQuality.high,
+                  )),
+                ),
               ),
             ),
           ),
@@ -136,23 +132,30 @@ class _MainScreenState extends State<MainScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                userName,
-                style: const TextStyle(
-                    color: Colors.black,
-                    letterSpacing: 0.8,
-                    fontFamily: "Lexend",
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
+              Observer(
+                builder: (context) => Text(
+                  appBarStore.user.value!.name,
+                  style: const TextStyle(
+                      color: Colors.black,
+                      letterSpacing: 0.8,
+                      fontFamily: "Lexend",
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
+                ),
               ),
-              Text(
-                DateFormat('EEEE, d MMMM', 'ru').format(dateTime).toTitleCase(),
-                style: const TextStyle(
-                    letterSpacing: 0.8,
-                    fontFamily: "Lexend",
-                    fontSize: 14,
-                    fontWeight: FontWeight.w100,
-                    color: Color.fromARGB(255, 104, 104, 104)),
+              ObserverStream<DateTime, Exception>(
+                observableStream: () => appBarStore.dateStream,
+                onData: (context, data) => Text(
+                  DateFormat('EEEE, d MMMM', 'ru')
+                      .format(data ?? DateTime.now())
+                      .toTitleCase(),
+                  style: const TextStyle(
+                      letterSpacing: 0.8,
+                      fontFamily: "Lexend",
+                      fontSize: 14,
+                      fontWeight: FontWeight.w100,
+                      color: Color.fromARGB(255, 104, 104, 104)),
+                ),
               ),
             ],
           ),

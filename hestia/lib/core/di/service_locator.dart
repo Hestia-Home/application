@@ -52,6 +52,10 @@ class MainServiceLocator {
 
   MainServiceLocator._();
 
+  init() {
+    final dataSource = _remoteDataSource;
+  }
+
   late final IRemoteRepository _remoteRepository =
       RemoteRepository(_remoteDataSource);
   late final IRemoteDataSource _remoteDataSource =
@@ -59,7 +63,7 @@ class MainServiceLocator {
   late final ILocalRepository _localRepository =
       LocalRepository(_localDataSource);
   late final ILocalDataSource _localDataSource =
-      LocalDataSource(_secureStorage, _getStorage, _hestiaDB);
+      LocalDataSource(_secureStorage, _hestiaDB);
   late final HestiaDB _hestiaDB = HestiaDB();
 
   late final AppBarStore appBarStore = AppBarStore(_localRepository);

@@ -12,13 +12,13 @@ mixin _$AppBarStore on _AppBarStore, Store {
   late final _$userAtom = Atom(name: '_AppBarStore.user', context: context);
 
   @override
-  UserEntity get user {
+  ObservableFuture<UserEntity> get user {
     _$userAtom.reportRead();
     return super.user;
   }
 
   @override
-  set user(UserEntity value) {
+  set user(ObservableFuture<UserEntity> value) {
     _$userAtom.reportWrite(value, super.user, () {
       super.user = value;
     });
@@ -27,41 +27,32 @@ mixin _$AppBarStore on _AppBarStore, Store {
   late final _$imageAtom = Atom(name: '_AppBarStore.image', context: context);
 
   @override
-  ImageProvider<Object> get image {
+  ObservableFuture<ImageProvider<Object>> get image {
     _$imageAtom.reportRead();
     return super.image;
   }
 
   @override
-  set image(ImageProvider<Object> value) {
+  set image(ObservableFuture<ImageProvider<Object>> value) {
     _$imageAtom.reportWrite(value, super.image, () {
       super.image = value;
     });
   }
 
-  late final _$_AppBarStoreActionController =
-      ActionController(name: '_AppBarStore', context: context);
+  late final _$getUserAvatarAsyncAction =
+      AsyncAction('_AppBarStore.getUserAvatar', context: context);
 
   @override
-  void getUserAvatar() {
-    final _$actionInfo = _$_AppBarStoreActionController.startAction(
-        name: '_AppBarStore.getUserAvatar');
-    try {
-      return super.getUserAvatar();
-    } finally {
-      _$_AppBarStoreActionController.endAction(_$actionInfo);
-    }
+  Future getUserAvatar() {
+    return _$getUserAvatarAsyncAction.run(() => super.getUserAvatar());
   }
 
+  late final _$getUserAsyncAction =
+      AsyncAction('_AppBarStore.getUser', context: context);
+
   @override
-  void getUser() {
-    final _$actionInfo = _$_AppBarStoreActionController.startAction(
-        name: '_AppBarStore.getUser');
-    try {
-      return super.getUser();
-    } finally {
-      _$_AppBarStoreActionController.endAction(_$actionInfo);
-    }
+  Future getUser() {
+    return _$getUserAsyncAction.run(() => super.getUser());
   }
 
   @override

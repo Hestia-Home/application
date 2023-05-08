@@ -10,7 +10,7 @@ import 'dart:developer' as developer;
 part 'appbar_store.g.dart';
 
 class _MockUser extends UserEntity {
-  const _MockUser() : super(isLoggedIn: true, name: "Пользователь");
+  const _MockUser() : super(isLoggedIn: true, name: "Станислав Моисеев");
 }
 
 class AppBarStore = _AppBarStore with _$AppBarStore;
@@ -19,21 +19,46 @@ abstract class _AppBarStore with Store {
   final ILocalRepository _localRepository;
 
   _AppBarStore(this._localRepository) {
-    _date = DateTime.now();
+    DateTime date = DateTime.now();
 
-    _dateStreamController = StreamController();
+    _dateStreamController.add(date);
 
-    _dateStreamController.add(_date);
+    _dateStreamUpdate(date);
+  }
 
-    dateStream = ObservableStream(_dateStreamController.stream);
+  @observable
+  ObservableFuture<UserEntity> user = ObservableFuture.value(const _MockUser());
 
+  @observable
+  ObservableFuture<ImageProvider> image =
+      ObservableFuture.value(const AssetImage('assets/main/user_image.jpg'));
+
+  final StreamController<DateTime> _dateStreamController = StreamController();
+
+  late ObservableStream<DateTime> dateStream =
+      ObservableStream(_dateStreamController.stream);
+
+  @action
+  getUserAvatar() async {
     try {
-      getUserAvatar();
-      getUser();
+      image = ObservableFuture(_getImage());
+      await image;
     } on Exception catch (e) {
       developer.log(e.toString());
     }
+  }
 
+  @action
+  getUser() async {
+    try {
+      user = ObservableFuture(_getUser());
+      await user;
+    } catch (e) {
+      developer.log(e.toString());
+    }
+  }
+
+  void _dateStreamUpdate(DateTime _date) {
     Timer.periodic(const Duration(seconds: 1), (timer) {
       final DateTime newDate = DateTime.now();
       if (newDate.day > _date.day) {
@@ -43,28 +68,14 @@ abstract class _AppBarStore with Store {
     });
   }
 
-  @observable
-  UserEntity user = const _MockUser();
-
-  @observable
-  ImageProvider image = const AssetImage('assets/main/empty_user_icon.jpg');
-
-  late DateTime _date;
-
-  late StreamController<DateTime> _dateStreamController;
-
-  late ObservableStream<DateTime> dateStream;
-
-  @action
-  void getUserAvatar() {
-    _localRepository.getUserAvatarImage().then((value) =>
-        image = value ?? const AssetImage('assets/main/empty_user_icon.jpg'));
+  Future<ImageProvider> _getImage() async {
+    final loadedImage = (await _localRepository.getUserAvatarImage()) ??
+        const AssetImage('assets/main/user_image.jpg');
+    return loadedImage;
   }
 
-  @action
-  void getUser() {
-    _localRepository
-        .getUser()
-        .then((value) => user = value ?? const _MockUser());
+  Future<UserEntity> _getUser() async {
+    final loadedUser = (await _localRepository.getUser()) ?? const _MockUser();
+    return loadedUser;
   }
 }
