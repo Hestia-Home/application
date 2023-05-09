@@ -58,12 +58,12 @@ abstract class _AppBarStore with Store {
     }
   }
 
-  void _dateStreamUpdate(DateTime _date) {
+  void _dateStreamUpdate(DateTime date) {
     Timer.periodic(const Duration(seconds: 1), (timer) {
       final DateTime newDate = DateTime.now();
-      if (newDate.day > _date.day) {
-        _date = newDate;
-        _dateStreamController.add(_date);
+      if (newDate.day > date.day) {
+        date = newDate;
+        _dateStreamController.add(date);
       }
     });
   }

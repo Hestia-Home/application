@@ -24,7 +24,7 @@ class RoomView extends StatelessWidget {
                   maxCrossAxisExtent: 200,
                   crossAxisSpacing: 5,
                   mainAxisSpacing: 5,
-                  childAspectRatio: 185 / 240),
+                  childAspectRatio: 185 / 250),
               itemBuilder: (context, gridIndex) {
                 return _getCardWidget(data?[gridIndex]);
               }),

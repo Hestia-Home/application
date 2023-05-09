@@ -31,17 +31,22 @@ class LocalDataSource implements ILocalDataSource {
 
       /// Mapping list of new event and checking [deviceType]
       /// After that new devices added in [deviceList] which is returned in new stream
-      event.map((e) {
-        final device = e.deviceType;
+
+      for (var element in event) {
+        final device = element.deviceType;
         switch (device) {
           case 1:
-            deviceList.add(TemperatureSensorModel.fromDB(e));
+            try {
+              deviceList.add(TemperatureSensorModel.fromDB(element));
+            } catch (e) {
+              dev.log(e.toString());
+            }
             break;
           case 2:
-            deviceList.add(LightingDeviceModel.fromDB(e));
+            deviceList.add(LightingDeviceModel.fromDB(element));
             break;
         }
-      });
+      }
       return deviceList;
     });
 
@@ -51,7 +56,6 @@ class LocalDataSource implements ILocalDataSource {
   @override
   Future<void> createOrUpdateDeviceInfo(Map<String, dynamic> json) async {
     final Devices device = DeviceToDbModel.fromJson(json);
-    dev.log(device.toString());
     await _hestiaDB.createOrUpdateDeviceInfo(device);
   }
 
@@ -86,7 +90,6 @@ class LocalDataSource implements ILocalDataSource {
     try {
       final String path = (await getApplicationDocumentsDirectory()).path;
       final bool isFileExists = io.File("$path/avatar.jpg").existsSync();
-
       if (isFileExists) image = FileImage(File("$path/avatar.jpg"));
     } on Exception catch (e) {
       dev.log(e.toString());
@@ -115,7 +118,6 @@ class LocalDataSource implements ILocalDataSource {
   @override
   Future<void> createOrUpdateRoomInfo(Map<String, dynamic> json) async {
     final room = RoomToDbModel.fromJson(json);
-    dev.log(room.toString());
     await _hestiaDB.createOrUpdateRoomInfo(room);
   }
 }

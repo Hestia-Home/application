@@ -56,6 +56,8 @@ class MainServiceLocator {
     final dataSource = _remoteDataSource;
   }
 
+  HestiaDB get hestiaDb => _hestiaDB;
+
   late final IRemoteRepository _remoteRepository =
       RemoteRepository(_remoteDataSource);
   late final IRemoteDataSource _remoteDataSource =
