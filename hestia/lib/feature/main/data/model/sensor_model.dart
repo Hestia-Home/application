@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter_smarthome/feature/main/data/data_source/database/db.dart';
 import 'package:flutter_smarthome/feature/main/domain/entity/temperature_sensor_entity.dart';
 
@@ -17,8 +16,9 @@ class TemperatureSensorModel extends TemperatureSensorEntity {
   }
 
   factory TemperatureSensorModel.fromDB(Devices device) {
-    final json = jsonDecode(device.data);
+    final Map<String, dynamic> json = jsonDecode(device.data);
     return TemperatureSensorModel(
-        id: device.id, temperature: double.tryParse(json['temperature']) ?? 0);
+        id: device.id,
+        temperature: double.tryParse(json['temperature'].toString()) ?? 0);
   }
 }

@@ -76,7 +76,7 @@ class HestiaDB extends _$HestiaDB {
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, 'db.sqlite'));
+    final file = File(p.join(dbFolder.path, 'hestiadb.sqlite'));
     return NativeDatabase.createInBackground(file);
   });
 }

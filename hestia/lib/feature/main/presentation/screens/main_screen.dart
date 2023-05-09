@@ -1,4 +1,5 @@
 // ignore_for_file: depend_on_referenced_packages
+import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -8,7 +9,6 @@ import 'package:flutter_smarthome/feature/main/presentation/widgets/page_view_in
 import 'package:flutter_smarthome/feature/main/presentation/widgets/room_view.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:mobx/mobx.dart';
 import 'package:mobx_widget/mobx_widget.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
@@ -57,7 +57,7 @@ class _MainScreenState extends State<MainScreen> {
               observableStream: () => appBarStore.dateStream,
               onData: (_, data) => _userComponent(appBarStore: appBarStore)),
           bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(15),
+              preferredSize: const Size.fromHeight(30),
               child: Observer(
                 builder: (context) {
                   if (mainStore.isErrorState) {
@@ -72,7 +72,7 @@ class _MainScreenState extends State<MainScreen> {
                   } else {
                     return SingleChildScrollView(
                       child: PageViewIndicator(
-                          roomsNames: mainStore.roomsListStream.data,
+                          roomsNames: mainStore.roomsListStream,
                           controller: _controller),
                     );
                   }
@@ -98,7 +98,43 @@ class _MainScreenState extends State<MainScreen> {
               }
             },
           )),
-        ));
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          selectedItemColor: Colors.black,
+          showUnselectedLabels: false,
+          showSelectedLabels: false,
+          elevation: 0,
+          items: const [
+            BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.home_outlined,
+                  size: 30,
+                ),
+                label: 'Главная'),
+            BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.add_circle,
+                  color: Colors.black,
+                  size: 40,
+                ),
+                label: 'Добавить'),
+            BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.insert_chart_outlined_rounded,
+                  size: 30,
+                ),
+                label: 'Статистика'),
+          ],
+        )
+        // ConvexAppBar(
+        //   items:
+        //   curve: Curves.easeInCirc,
+        //   backgroundColor: Colors.transparent,
+        //   shadowColor: const Color.fromARGB(255, 205, 203, 203),
+        //   activeColor: Color.fromARGB(255, 137, 133, 133),
+
+        // ),
+        );
   }
 
   Widget _userComponent({required AppBarStore appBarStore}) {

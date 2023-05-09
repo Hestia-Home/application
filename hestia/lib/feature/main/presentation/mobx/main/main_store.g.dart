@@ -9,6 +9,38 @@ part of 'main_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$MainStore on _MainStore, Store {
+  late final _$roomsListStreamAtom =
+      Atom(name: '_MainStore.roomsListStream', context: context);
+
+  @override
+  ObservableStream<List<RoomEntity>> get roomsListStream {
+    _$roomsListStreamAtom.reportRead();
+    return super.roomsListStream;
+  }
+
+  @override
+  set roomsListStream(ObservableStream<List<RoomEntity>> value) {
+    _$roomsListStreamAtom.reportWrite(value, super.roomsListStream, () {
+      super.roomsListStream = value;
+    });
+  }
+
+  late final _$devicesStreamAtom =
+      Atom(name: '_MainStore.devicesStream', context: context);
+
+  @override
+  ObservableStream<List<Device>> get devicesStream {
+    _$devicesStreamAtom.reportRead();
+    return super.devicesStream;
+  }
+
+  @override
+  set devicesStream(ObservableStream<List<Device>> value) {
+    _$devicesStreamAtom.reportWrite(value, super.devicesStream, () {
+      super.devicesStream = value;
+    });
+  }
+
   late final _$errorMessageAtom =
       Atom(name: '_MainStore.errorMessage', context: context);
 
@@ -83,11 +115,22 @@ mixin _$MainStore on _MainStore, Store {
   }
 
   @override
-  void tryAgainIfError() {
+  void _setDataRecievedState() {
     final _$actionInfo = _$_MainStoreActionController.startAction(
-        name: '_MainStore.tryAgainIfError');
+        name: '_MainStore._setDataRecievedState');
     try {
-      return super.tryAgainIfError();
+      return super._setDataRecievedState();
+    } finally {
+      _$_MainStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void _endErrorState() {
+    final _$actionInfo = _$_MainStoreActionController.startAction(
+        name: '_MainStore._endErrorState');
+    try {
+      return super._endErrorState();
     } finally {
       _$_MainStoreActionController.endAction(_$actionInfo);
     }
@@ -96,6 +139,8 @@ mixin _$MainStore on _MainStore, Store {
   @override
   String toString() {
     return '''
+roomsListStream: ${roomsListStream},
+devicesStream: ${devicesStream},
 errorMessage: ${errorMessage},
 isErrorState: ${isErrorState},
 isEmptyState: ${isEmptyState}
