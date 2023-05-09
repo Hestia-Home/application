@@ -1,5 +1,4 @@
 // ignore_for_file: depend_on_referenced_packages
-import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -125,16 +124,7 @@ class _MainScreenState extends State<MainScreen> {
                 ),
                 label: 'Статистика'),
           ],
-        )
-        // ConvexAppBar(
-        //   items:
-        //   curve: Curves.easeInCirc,
-        //   backgroundColor: Colors.transparent,
-        //   shadowColor: const Color.fromARGB(255, 205, 203, 203),
-        //   activeColor: Color.fromARGB(255, 137, 133, 133),
-
-        // ),
-        );
+        ));
   }
 
   Widget _userComponent({required AppBarStore appBarStore}) {

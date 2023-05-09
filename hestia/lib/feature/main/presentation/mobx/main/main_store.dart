@@ -3,7 +3,6 @@ import 'package:flutter_smarthome/feature/main/domain/entity/device.dart';
 import 'package:flutter_smarthome/feature/main/domain/entity/room_entity.dart';
 import 'package:flutter_smarthome/feature/main/domain/repository/i_local_repository.dart';
 import 'package:mobx/mobx.dart';
-import 'dart:developer' as developer;
 
 part 'main_store.g.dart';
 
